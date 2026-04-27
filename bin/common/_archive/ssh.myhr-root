@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ssh -i ~/.aws/myhrllc.pem ubuntu@ec2-54-244-0-222.us-west-2.compute.amazonaws.com
+

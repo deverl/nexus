@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+devname=$(ls -1 /dev/tty.usb*)
+
+# set -x
+
+screen -h 10000 $devname 115200 8N1
+

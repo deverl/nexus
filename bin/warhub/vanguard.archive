@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+TS=$(date +%Y-%m-%d_%H%M)
+
+ARCHIVE_DIR=~/tmp/vanguard/$TS
+
+mkdir -p $ARCHIVE_DIR
+
+cd ~/develop/vanguard
+
+tar cf git.tar .git
+
+xz -2 git.tar
+
+mv git.tar.xz $ARCHIVE_DIR
+
+tar cf idea.tar .idea
+
+xz -2 idea.tar
+
+mv idea.tar.xz $ARCHIVE_DIR
+
+cd $ARCHIVE_DIR
+
+ls -lh@
+

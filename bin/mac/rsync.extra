@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [ $# -gt 0 ]
+then
+    rsync -av --delete  --dry-run               \
+          --exclude='tsheetsmbp.sparsebundle'   \
+          --exclude='VM'                        \
+          --exclude='tmbootpicker.efi'          \
+          ./* "$@"
+else
+    echo "ERROR: You must specify the src and dest directories!"
+fi
+

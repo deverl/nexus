@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+podman build --squash-all /Users/dstokes/Projects/docker/dstokes-ubuntu/
+

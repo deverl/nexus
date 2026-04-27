@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+
+http_dir="/opt/http"
+
+
+echo "Set owner/group to dstokes/staff on all files and directories..."
+
+find ${http_dir} -exec chown dstokes "{}" \;
+find ${http_dir} -exec chgrp staff "{}" \;
+
+
+echo "Set read/write/execute, for everyone, on everything..."
+
+find ${http_dir} -exec chmod a+rwx "{}" \;
+
+
+echo "Remove write for all on directories..."
+
+find ${http_dir} -type d -exec chmod o-w "{}" \;
+
+
+echo "Remove execute, for all, on files..."
+
+find ${http_dir} -type f -exec chmod o-x "{}" \;
+
+
+echo "done."
+

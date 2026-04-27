@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+
+typeset -i VERBOSE=0
+
+typeset -i KEEP_TEMPS=0
+
+TLD=www.googleapis.com
+
+CHANGE_BASE_URL=https://${TLD}/storage/v1/b/chromium-browser-snapshots/o
+
+DOWNLOAD_ONLY=0
+
+DOWNLOAD_BASE_URL=https://${TLD}/download/storage/v1/b/chromium-browser-snapshots/o
+
+CHANGE_FILE=/tmp/chromium_latest_change
+
+DOWNLOAD_DIRECTORY=/tmp/chromium
+
+DOWNLOAD_LOG_FILE=~/idrive/Config/Chromium/download.log
+
+
+
+# Change ARCHITECTURE to an empty string to use Intel as the default
+ARCHITECTURE=_Arm
+
+if [ "$ARCHITECTURE" = "_Arm" ]
+then
+    DOWNLOAD_DIRECTORY_SUFFIX=_Arm
+else
+    DOWNLOAD_DIRECTORY_SUFFIX=_Intel
+fi
+
+
+typeset -i EXTRACT_VERSION=0
+
+function usage() {
+    echo ""
+    echo "usage: chromium.get_latest [opts]"
+    echo ""
+    echo "   opts: -a, --arm                 fetch the Arm (or Apple) version (default)"
+    echo "         -D, --download-only       stop after the latest is downloaded"
+    echo "         -d, --download-dir <dir>  use <dir> as the download directory"
+    echo "         -e, --extract-version     extracts the version info into a text file"
+    echo "         -h, --help                show this screen and exit"
+    echo "         -i, --intel               fetch the intel version"
+    echo "         -k, --keep-temps          keep temporary files"
+    echo "         -v, --verbose             show download progress"
+    echo ""
+}
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-a" -o "$1" = "--arm" ]
+    then
+        ARCHITECTURE=_Arm
+        DOWNLOAD_DIRECTORY_SUFFIX=_Arm
+    elif [ "$1" = "-D" -o "$1" = "--download-only" ]
+    then
+        DOWNLOAD_ONLY=1
+    elif [ "$1" = "-d" -o "$1" = "--download-dir" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            if [ -d "$1" ]
+            then
+                DOWNLOAD_DIRECTORY=$1
+            else
+                echo "ERROR: Directory doesn't exist: $1"
+                exit 1
+            fi
+        else
+            echo "ERROR: No value given for --download-dir!"
+            exit 1
+        fi
+    elif [ "$1" = "-e" -o "$1" = "--extract-version" ]
+    then
+        EXTRACT_VERSION=1
+    elif [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        usage
+        exit 0
+    elif [ "$1" = "-i" -o "$1" = "--intel" ]
+    then
+        ARCHITECTURE="" # No file name suffix for Intel
+        DOWNLOAD_DIRECTORY_SUFFIX=_Intel
+    elif [ "$1" = "-k" -o "$1" = "--keep-temps" ]
+    then
+        KEEP_TEMPS=1
+    elif [ "$1" = "-v" -o "$1" = "--verbose" ]
+    then
+        VERBOSE=$VERBOSE+1
+    fi
+    shift
+done
+
+
+if [ ! -d $DOWNLOAD_DIRECTORY ]
+then
+    mkdir -p $DOWNLOAD_DIRECTORY
+fi
+
+cd $DOWNLOAD_DIRECTORY
+
+if [ ! -f ${DOWNLOAD_LOG_FILE} ]
+then
+    touch ${DOWNLOAD_LOG_FILE}
+fi
+
+
+rm -f $CHANGE_FILE
+
+if [ $VERBOSE -gt 0 ]
+then
+    echo "Downloading change file..."
+fi
+
+curl -s ${CHANGE_BASE_URL}/Mac${ARCHITECTURE}%2FLAST_CHANGE > ${CHANGE_FILE}
+
+if [ ! -f $CHANGE_FILE ]
+then
+    echo "ERROR: Download of latest change file failed!"
+    exit 1
+fi
+
+if [ $VERBOSE -gt 1 ]
+then
+    echo "---------------------------------------------------------------------------------------------------"
+    cat $CHANGE_FILE
+    echo "---------------------------------------------------------------------------------------------------"
+fi
+
+MEDIA_LINK=$(cat $CHANGE_FILE | grep 'mediaLink' | awk '{print $2}' | sed 's/,//' | sed 's/"//g')
+
+if [ $VERBOSE -gt 0 ]
+then
+    echo "MEDIA_LINK = $MEDIA_LINK"
+fi
+
+
+LATEST=$(curl -s "$MEDIA_LINK")
+
+if [ "$LATEST" = "" ]
+then
+    echo "ERROR: Can't determine latest build (commit) number!"
+    exit 1
+fi
+
+
+if [ $VERBOSE -gt 0 ]
+then
+    echo "LATEST = $LATEST"
+fi
+
+# If we aren't doing download_only, then check to see if we have already downloaded this version.
+if [ $DOWNLOAD_ONLY -eq 0 ]
+then
+    grep -q "$LATEST" ${DOWNLOAD_LOG_FILE}
+    if [ $? -eq 0 ]
+    then
+        # If we have downloaded the latest version, let the user know then exit.
+        PREV_DATE=$(grep "$LATEST" ${DOWNLOAD_LOG_FILE} | sed 's/^.* at //')
+        echo "Build ${LATEST} was previously downloaded at $PREV_DATE."
+        exit 0
+    fi
+fi
+
+# Check to see if chromium is running. If so, skip the install portion of the script.
+RET=$(ps aux | grep -i chromium.app | grep -v -e grep -e get_latest -e get_loop | wc -l | gawk '{ print $1 }')
+
+if [ "$RET" -ne "0" ]
+then
+    echo "Chromium appears to be running. Shut down Chromium and try again."
+    exit 1
+fi
+
+
+if [ $KEEP_TEMPS -eq 0 ]
+then
+    rm -f $CHANGE_FILE
+fi
+
+ZIP_FILE=${DOWNLOAD_DIRECTORY}/chromium_mac-${LATEST}.zip
+
+BASE_ZIP_FILE=$(basename $ZIP_FILE)
+
+
+echo "Downloading commit $LATEST."
+
+CURL_OPTS=""
+
+if [ $VERBOSE -eq 0 ]
+then
+    CURL_OPTS="$CURL_OPTS -s"
+fi
+
+curl ${CURL_OPTS} ${DOWNLOAD_BASE_URL}/Mac${ARCHITECTURE}%2F${LATEST}%2Fchrome-mac.zip?alt=media -o ${ZIP_FILE}
+
+if [ $DOWNLOAD_ONLY -gt 0 ]
+then
+    echo "Exiting after download."
+    exit 0
+fi
+
+DOWNLOAD_DATE=$(date "+%Y/%m/%d %H:%M:%S")
+
+echo "Downloaded $LATEST at $DOWNLOAD_DATE" >> ${DOWNLOAD_LOG_FILE}
+
+
+
+if [ -d chrome-mac ]
+then
+    rm -rf chrome-mac
+fi
+
+
+echo "Extracting..."
+
+unzip $ZIP_FILE > /dev/null
+
+echo "Installing..."
+
+rsync -av --delete --force --prune-empty-dirs chrome-mac/Chromium.app/ /Applications/Chromium.app/ > /dev/null
+
+if [ $EXTRACT_VERSION ]
+then
+    cat chrome-mac/Chromium.app/Contents/Info.plist  | grep '[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*' | sed 's/<string>//' | sed 's/<\/string\>//' | gawk '{print $1}' > version-${LATEST}.txt
+fi
+
+# rm -rf chrome-mac $ZIP_FILE version-${LATEST}.txt
+
+rm -rf $DOWNLOAD_DIRECTORY
+
+d=$(date "+%Y/%m/%d %H:%M:%S")
+
+echo "done at: $d"

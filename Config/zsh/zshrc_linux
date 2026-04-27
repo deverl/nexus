@@ -1,0 +1,28 @@
+###################################################################
+# zshrc_linux
+
+if [ -f ~/nexus/Config/zsh/zshrc_common ]
+then
+    source ~/nexus/Config/zsh/zshrc_common
+fi
+
+addToPath ~/nexus/bin/linux
+addToPath /usr/local/go/bin
+
+addToPath /sbin
+
+alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date'
+alias hbuun='brew update && brew upgrade --dry-run'
+
+source ~/nexus/bin/common/z.sh
+
+if [ -f ~/.zshrc_local ]
+then
+    source ~/.zshrc_local
+fi
+
+# Add homebrew (if installed)
+addToPath /home/linuxbrew/.linuxbrew/bin
+
+export PATH
+

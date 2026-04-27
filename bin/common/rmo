@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+find . -type f -iname '*.o' -print -exec rm -f "{}" \;
+

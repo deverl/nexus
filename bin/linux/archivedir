@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+backupDir=~/idrive/tmp
+
+
+getNextName()
+{
+    typeset -i i=0
+    theDir="$1"
+    bn=$(basename "$theDir")
+
+    fullPath=$backupDir/"$bn"_000.tgz
+
+    # echo "Trying: $fullPath"
+
+    while [ -f "$fullPath" ]
+    do
+        i=$i+1
+
+        ext="$i"
+
+        while [ ${#ext} -lt 3 ]
+        do
+            ext="0$ext"
+        done
+
+        # echo "next ext=\"$ext\""
+
+        fullPath=$backupDir/"$bn"_"$ext".tgz
+
+        # echo "Trying: $fullPath"
+    done
+
+    echo $fullPath
+}
+
+
+
+
+if [ $# -eq 0 ]
+then
+    echo "usage: archivedir <dir> [<dir2> ...]"
+    exit 1
+fi
+
+
+while [ $# -gt 0 ]
+do
+    theDir=$(realpath "$1")
+
+    bn=$(basename "$theDir")
+
+    fullArchivePath=$(getNextName "$theDir")
+
+    localArchivePath=$(basename "$fullArchivePath")
+
+    # echo "fullArchivePath = \"$fullArchivePath\", localArchivePath = \"$localArchivePath\""
+
+    tar czf "$localArchivePath" "$bn"
+
+    cp -f "$localArchivePath" "$fullArchivePath"
+
+    shift
+done
+
+
+

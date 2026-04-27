@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+SOURCE_REPO=chromiumos
+
+if [ -d ${SOURCE_REPO} ]
+then
+    mkdir ${SOURCE_REPO}
+fi
+
+cd ${SOURCE_REPO}
+
+repo init -u https://chromium.googlesource.com/chromiumos/manifest.git
+
+# Optional: Make any changes to .repo/local_manifest.xml before syncing
+
+repo sync
+
+

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+SRC_DIR=/Users/Shared/VM
+DATE=$(date +'%Y-%m-%d')
+ARCHIVE_DIR=/Volumes/extra/Archives/VM
+
+typeset -i FORCE=0
+
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-f" ]
+    then
+        FORCE=1
+    else
+        echo "ERROR: Unrecognized argument ($1)!"
+        exit 1
+    fi
+
+    shift
+done
+
+
+if [ ! -d "$SRC_DIR" ]
+then
+    echo "ERROR: Source directory ($SRC_DIR) doesn't exist!"
+    exit 3
+fi
+
+if [ ! -d $ARCHIVE_DIR ]
+then
+    echo "ERROR: Destination directory ($ARCHIVE_DIR) isn't mounted!"
+    exit 5
+fi
+
+cd $SRC_DIR
+
+DEST_DIR=${ARCHIVE_DIR}/${DATE}
+
+if [ -d $DEST_DIR ]
+then
+    if [ $FORCE -eq 1 ]
+    then
+        rm -rf $DEST_DIR/*
+    else
+        echo "ERROR: You've already done a backup today!"
+        exit 7
+    fi
+else
+    mkdir -p ${DEST_DIR}
+fi
+
+rsync -av $SRC_DIR/ $DEST_DIR/
+

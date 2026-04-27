@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 2 ]
+then
+    server=$1
+    ip=$2
+
+    curl --silent http://mcloudservice.appspot.com/proxyinfo?server=$server\&ip=$ip -d x
+else
+    echo "usage: updateProxy <server> <ip>"
+fi
+

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# This script just ensurs that the backup ssh directory on idrive is updated.
+
+rsync -av ~/.ssh ~/idrive/Config/mbp_ssh/
+

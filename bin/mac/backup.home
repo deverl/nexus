@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+
+TARGET_DIR=/Volumes/data/Backups/home
+
+# Check to ensure that the data volume is mounted.
+
+if [ ! -d $TARGET_DIR ]
+then
+    echo "WARNING: data volume is not mounted! Using shared directory."
+    TARGET_DIR=/Users/Shared/dstokes/Backups/home
+    if [ ! -d $TARGET_DIR ]
+    then
+    	mkdir -p $TARGET_DIR
+    fi
+fi
+
+# Check for the existence of gnu tar.
+
+command -v gtar > /dev/null 2>&1
+RET=$?
+
+if [ $RET -ne 0 ]
+then
+    echo "Gnu tar not found. Run 'brew install gnu-tar' and try again"
+    exit 1
+fi
+
+cd ~
+
+HOMEDIR=$(basename $(pwd))
+
+COMPRESSION=0
+ENCRYPT=0
+LISTING=0
+
+function show_help() {
+    echo ""
+    echo "backup.home"
+    echo ""
+    echo "usage: backup.home [opts]"
+    echo "  opts:"
+    echo "      -0, --no-compression    Do not compress the resulting archive file (default)"
+    echo "      -1, --use-gzip          Compress using gzip (.tgz)"
+    echo "      -2, --use-bzip2         Compress using bzip2 (.tbz)"
+    echo "      -3, --use-bzip3         Compress using bzip3 (.tar.bz3)"
+    echo "      -4, --use-lzma          Compress using lzma (xz) (.txz)"
+    echo "      -7, --use-7zip          Compress using 7zip (.tar.7z)"
+    echo "      -x, --use-xz            Compress using xz (.tar.xz)"
+    echo "      -e, --encrypt           Encrypt the resulting archive file. Will encrypt and add .gpg"
+    echo "      -h, --help              Show this help screen then exit"
+    echo "      -l, --listing           Create a listing file"
+    echo ""
+}
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-x" -o "$1" = "--use-xz" ]
+    then
+        COMPRESSION=8
+    elif [ "$1" = "-7" -o "$1" = "--use-7zip" ]
+    then
+        COMPRESSION=7
+    elif [ "$1" = "-4" -o "$1" = "--use-lzma" ]
+    then
+        COMPRESSION=4
+    elif [ "$1" = "-3" -o "$1" = "--use-bzip3" ]
+    then
+        COMPRESSION=3
+    elif [ "$1" = "-2" -o "$1" = "--use-bzip2" ]
+    then
+        COMPRESSION=2
+    elif [ "$1" = "-1" -o "$1" = "--use-gzip" ]
+    then
+        COMPRESSION=1
+    elif [ "$1" = "-0" -o "$1" = "--no-compressoin" ]
+    then
+        COMPRESSION=0
+    elif [ "$1" = "-e" -o "$1" = "--encrypt" ]
+    then
+        ENCRYPT=1
+    elif [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        show_help
+        exit 1
+    elif [ "$1" = "-l" -o "$1" = "--listing" ]
+    then
+        LISTING=1
+    else
+        echo "ERROR: Invalid option: '$1'"
+        exit 1
+    fi
+    shift
+done
+
+rm -f ${HOMEDIR}*.tar* ${HOMEDIR}*.tbz* ${HOMEDIR}*.tgz*
+
+cd ..
+
+CMDLINE="cf"
+EXTENSION=tar
+
+if [ $COMPRESSION -eq 1 ]
+then
+    CMDLINE="czf"
+    EXTENSION=tgz
+elif [ $COMPRESSION -eq 2 ]
+then
+    CMDLINE="cjf"
+    EXTENSION=tbz
+elif [ $COMPRESSION -eq 4 ]
+then
+    CMDLINE="cJf"
+    EXTENSION=txz
+fi
+
+TARGET=$HOMEDIR.$EXTENSION
+
+gtar $CMDLINE $TARGET_DIR/$TARGET \
+    --exclude '.asdf' \
+    --exclude '.cache' \
+    --exclude '.claude' \
+    --exclude '.DS_Store' \
+    --exclude '.ruff_cache' \
+    --exclude '*.nobackup' \
+    --exclude '*.sock' \
+    --exclude '*.socket' \
+    --exclude '*/.angular/cache*' \
+    --exclude 'discord' \
+    --exclude 'dstokes/.android' \
+    --exclude 'dstokes/.aspnet' \
+    --exclude 'dstokes/.backup' \
+    --exclude 'dstokes/.cargo' \
+    --exclude 'dstokes/.cisco' \
+    --exclude 'dstokes/.composer' \
+    --exclude 'dstokes/.config/gcloud' \
+    --exclude 'dstokes/.config/iterm2/sockets' \
+    --exclude 'dstokes/.cups' \
+    --exclude 'dstokes/.cursor' \
+    --exclude 'dstokes/.deno' \
+    --exclude 'dstokes/.docker' \
+    --exclude 'dstokes/.dotnet/' \
+    --exclude 'dstokes/.dvm' \
+    --exclude 'dstokes/.eclipse' \
+    --exclude 'dstokes/.gem' \
+    --exclude 'dstokes/.gradle' \
+    --exclude 'dstokes/.kube' \
+    --exclude 'dstokes/.local' \
+    --exclude 'dstokes/.m2' \
+    --exclude 'dstokes/.minikube' \
+    --exclude 'dstokes/.mono' \
+    --exclude 'dstokes/.n' \
+    --exclude 'dstokes/.node-gyp' \
+    --exclude 'dstokes/.npm*' \
+    --exclude 'dstokes/.nuget' \
+    --exclude 'dstokes/.nvm' \
+    --exclude 'dstokes/.pyenv' \
+    --exclude 'dstokes/.rover' \
+    --exclude 'dstokes/.rustup' \
+    --exclude 'dstokes/.swiftpm' \
+    --exclude 'dstokes/.templateengine' \
+    --exclude 'dstokes/.Trash' \
+    --exclude 'dstokes/.vscode-server' \
+    --exclude 'dstokes/.vscode' \
+    --exclude 'dstokes/.yarn' \
+    --exclude 'dstokes/Applications' \
+    --exclude 'dstokes/Backups' \
+    --exclude 'dstokes/bin/android/platform-tools' \
+    --exclude 'dstokes/dev/*/.git' \
+    --exclude 'dstokes/dev/*heatmap_viewer/dist' \
+    --exclude 'dstokes/develop/vanguard/jaguar/data' \
+    --exclude 'dstokes/Downloads/*.db' \
+    --exclude 'dstokes/Downloads/*.pbin' \
+    --exclude 'dstokes/Downloads/chromium*.zip' \
+    --exclude 'dstokes/Downloads/enwik9.zip' \
+    --exclude 'dstokes/Downloads/lesson' \
+    --exclude 'dstokes/go' \
+    --exclude 'dstokes/Install' \
+    --exclude 'dstokes/Learning' \
+    --exclude 'dstokes/Library' \
+    --exclude 'dstokes/Movies' \
+    --exclude 'dstokes/Music' \
+    --exclude 'dstokes/nexus/.git' \
+    --exclude 'dstokes/opt/db_bkup' \
+    --exclude 'dstokes/Parallels' \
+    --exclude 'dstokes/Pictures' \
+    --exclude 'dstokes/Projects/*/.idea' \
+    --exclude 'dstokes/Projects/*/Darwin_obj[dn]' \
+    --exclude 'dstokes/Projects/*/target/debug' \
+    --exclude 'dstokes/Projects/*/target/release' \
+    --exclude 'dstokes/Projects/fcc/data' \
+    --exclude 'dstokes/Projects/kotlin' \
+    --exclude 'dstokes/Projects/web/affordableimages' \
+    --exclude 'dstokes/Projects/web/affordableimages/public_html/vendor' \
+    --exclude 'node_modules' \
+    --exclude 'Pictures/Photos Library.photoslibrary' \
+    --exclude 'vanguard/jaguar/htmlcov' \
+    --exclude 'vanguard/jaguar/tmp' \
+    --exclude "*/__pycache__" \
+    --exclude "*/site-packages" \
+    -v \
+    dstokes
+
+
+
+
+
+TS=$(date "+%Y%m%dT%H%M")
+
+FNAME=${HOMEDIR}-$TS.$EXTENSION
+
+cd $TARGET_DIR
+
+echo "========================================================================================"
+pwd
+echo "========================================================================================"
+
+mv ${HOMEDIR}.$EXTENSION $FNAME
+
+if [ $LISTING -gt 0 ]
+then
+    echo ""
+    echo "Creating listing file..."
+    gtar tvf $FNAME > $FNAME.txt
+fi
+
+
+if [ $COMPRESSION -eq 3 ]
+then
+    echo "Compressing with bzip3..."
+    time bzip3 $FNAME
+    FNAME="$FNAME.bz3"
+elif [ $COMPRESSION -eq 7 ]
+then
+    echo "Compressing with 7zip"
+    7z a -mx=9 $FNAME.7z $FNAME
+    rm $FNAME
+    FNAME="$FNAME.7z"
+elif [ $COMPRESSION -eq 8 ]
+then
+    echo "Compressing with xz"
+    xz -9 $FNAME
+    FNAME="$FNAME.xz"
+fi
+
+if [ $ENCRYPT -eq 1 ]
+then
+    echo "Encrypting..."
+    time gpg -c -o $FNAME.gpg $FNAME
+fi
+
+ls -lh $FNAME*
+
+
+echo ""
+echo "done."
+

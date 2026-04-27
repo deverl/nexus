@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+typeset -i marvell=1
+
+
+if [ $# -gt 0 ]
+then
+    if [ $1 == "-o" -o $1 == "--use-outside" ]
+    then
+        marvell=0
+    elif [ $1 == "-m" -o $1 == "--use-marvell" ]
+    then
+        marvell=1
+    elif [ $1 == "-h" -o $1 == "--help" ]
+    then
+        echo ""
+        echo "usage: setpostfix [-opts]"
+        echo ""
+        echo " opts: -m, --use-marvell     Switch to outside of Marvell (default)."
+        echo "       -o, --use-outside     Switch to inside of Marvell."
+        echo "       -h, --help            Show this screen and exit."
+        echo ""
+    else
+        echo "ERROR: Unrecognized option: $1"
+        exit 1
+    fi
+fi
+
+
+cd /etc/postfix
+
+if [ ${marvell} -eq 1 ]
+then
+    sudo cp -f main.cf.marvell main.cf
+else
+    sudo cp -f main.cf.outside main.cf
+    sudo rm -f sasl_passwd.db
+    sudo postmap /etc/postfix/sasl_passwd
+fi
+
+sudo postfix stop
+
+sudo postfix start
+
+

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]
+then
+    echo "ERROR: You must supply at least one pattern to kill"
+    exit 1
+fi
+
+while [ $# -gt 0 ]
+do
+    thePat=$1
+
+    thePidArr=( $(ps -ef | grep -i "${thePat}" | grep -v -e grep -e killpat | awk '{ print $2 }') )
+
+    for s in ${thePidArr[@]}
+    do
+        echo "killing PID = $s"
+
+        kill -9 $s
+    done
+
+    shift
+
+done
+
+

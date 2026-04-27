@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if [ -d ~/tmp ]
+then
+    docker run -v ~/tmp:/home/dstokes/tmp -w /root --cpus=8 -it -p 4000:4000 dstokes-ubuntu /bin/bash
+else
+    docker run --cpus=8 -w /root -it -p 4000:4000 dstokes-ubuntu /bin/bash
+fi
+
+ID=$(docker ps -a | grep 'dstokes-ubuntu' | awk '{print $1;}')
+
+
+if [ "$ID" != "" ]
+then
+    docker commit $ID dstokes-ubuntu
+    docker container rm $ID
+fi
+

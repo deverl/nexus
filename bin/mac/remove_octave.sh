@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+brew uninstall eigen lz4 hwloc open-mpi openblas arpack jbig2dec libidn little-cms2 openjpeg ghostscript epstool fftw jasper netpbm fig2dev fltk gl2ps glpk libcerf glib libpthread-stubs xorgproto libxau libxdmcp libxcb libx11 libxext libxrender lzo pixman cairo fribidi graphite2 harfbuzz pango qt@5 gnuplot graphicsmagick libaec hdf5 libogg flac libvorbis opus libsndfile portaudio libde265 docbook docbook-xsl gnu-getopt xmlto shared-mime-info x265 libheif liblqr libomp libraw imagemagick plotutils pstoedit qhull qrupdate pyqt@5 qscintilla2 metis suite-sparse sundials texinfo octave

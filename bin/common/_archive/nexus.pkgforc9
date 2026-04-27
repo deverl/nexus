@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+cd ~/Dropbox
+
+tar -c                          \
+    --exclude='.DS_Store'       \
+    --exclude='.git*'           \
+    --exclude='Android'         \
+    --exclude='apache'          \
+    --exclude='belkin.txt'      \
+    --exclude='code'            \
+    --exclude='crontab'         \
+    --exclude='csh'             \
+    --exclude='Cygwin'          \
+    --exclude='cygwin'          \
+    --exclude='eclipse'         \
+    --exclude='ent_unix'        \
+    --exclude='gnome'           \
+    --exclude='google'          \
+    --exclude='images'          \
+    --exclude='KeePassX'        \
+    --exclude='mac'             \
+    --exclude='mariner.router'  \
+    --exclude='mugs'            \
+    --exclude='SlickEdit'       \
+    --exclude='tsheets'         \
+    --exclude='unison'          \
+    --exclude='unity'           \
+    --exclude='unix'            \
+    --exclude='upstart'         \
+    --exclude='urls.txt'        \
+    --exclude='win'             \
+    --exclude='zsh'             \
+    -jf                         \
+    ~/tmp/nexus.tbz nexus
+
+
+
+#    --exclude='RightScale'      \
+#    --exclude='rightscale'      \

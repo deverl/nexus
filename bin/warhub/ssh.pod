@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+    cat << 'EOF'
+
+Usage: ssh.pod [NAMESPACE] [PATTERN]
+
+Exec into the first running pod whose name matches the given pattern in the specified namespace.
+
+Arguments:
+  NAMESPACE    Kubernetes namespace (required)
+               Example: nrac, trustpoint, homewi, acclhw, ...
+
+  PATTERN      String/regex pattern to match pod name against (required)
+               Example: core, beat, celery, rabbitmq, warranty, affiliate, portal
+
+Examples:
+  ssh.pod nrac core
+  ssh.pod trustpoint warranty
+
+EOF
+    exit 1
+}
+
+# Show help if no args or help flags
+if [[ $# -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+    usage
+fi
+
+NAMESPACE="$1"
+PATTERN="$2"
+
+# Find the first running pod whose name matches the pattern
+pod=$(kubectl get pods -n "$NAMESPACE" --field-selector=status.phase=Running \
+    -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' \
+    | grep -E "$PATTERN" | head -n 1)
+
+if [[ -z "$pod" ]]; then
+    printf "ERROR: No running pod found matching pattern '%s' in namespace '%s'\n" \
+        "$PATTERN" "$NAMESPACE" >&2
+    exit 1
+fi
+
+printf "Found pod: %s\n" "$pod"
+printf "Entering shell...\n\n"
+
+# Exec into the pod
+kubectl exec -it -n "$NAMESPACE" "$pod" -- /bin/bash || {
+    # Fallback to sh if bash is not available
+    echo "bash not found, trying /bin/sh..."
+    kubectl exec -it -n "$NAMESPACE" "$pod" -- /bin/sh
+}

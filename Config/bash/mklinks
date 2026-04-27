@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# set -x
+
+cd ~
+
+for F in astylerc  \
+         inputrc   \
+         lscolors  \
+         vimrc     \
+         gvimrc
+do
+    if [ -L .$F ]
+    then
+        unlink .$F
+    fi
+
+    ln -s nexus/Config/bash/$F .$F
+done
+

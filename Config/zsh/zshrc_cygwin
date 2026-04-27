@@ -1,0 +1,73 @@
+###################################################################
+# .zshrc_cygwin
+
+if [ -f ~/nexus/Config/zsh/zshrc_common ]
+then
+    source ~/nexus/Config/zsh/zshrc_common
+fi
+
+addToPath /cygdrive/c/bin
+addToPath /cygdrive/d/bin
+addToPath /cygdrive/c/android-sdk-windows/platform-tools
+addToPath /cygdrive/c/android-sdk-windows/tools
+addToPath /cygdrive/c/android-sdk-windows
+addToPath ~/nexus/Config/Cygwin/bin
+
+export PATH
+
+# TMP and TEMP are defined in the Windows environment.  Leaving
+# them set to the default Windows temporary directory can have
+# unexpected consequences.
+unset TMP
+unset TEMP
+# Alternatively, set them to the Cygwin temporary directory
+# or to any other tmp directory of your choice
+export TMP=/tmp
+export TEMP=/tmp
+export TMPDIR=/tmp
+
+unset VIM
+
+alias ll='ls -l'                                # long list
+alias ls='ls -FC --color=auto'
+alias ls='ls -hF --color=tty'                   # classify files in colour
+alias vi='vim'
+alias 7za='7z'
+alias docs='cd "$(cygpath -O)"; pwd'
+alias desktop='cd "$(cygpath -D)"; pwd'
+alias ifconfig='ipconfig'
+
+# Set the history size and file location.
+HISTFILE=~/.histfile
+HISTSIZE=2000
+SAVEHIST=2000
+
+# Turn off the annoying error bell.
+unsetopt beep
+
+# Use vi key bindings.
+bindkey -v
+
+zstyle :compinstall filename '/Users/dstokes/.zshrc'
+
+autoload -Uz compinit
+compinit
+
+
+# Configure for case insensitive matching.
+compinit -C
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+
+# Allow interactive command line comments.
+setopt interactivecomments
+
+
+# Set my favorite prompt.
+export PS1='[%!]$ '
+
+
+if [ -f ~/nexus/bin/common/z.sh ]
+then
+    source ~/nexus/bin/common/z.sh
+fi

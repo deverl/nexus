@@ -1,0 +1,40 @@
+
+addToPath ~/nexus/bin/warhub
+
+alias whlogs='tail -f ~/develop/vanguard/jaguar/data/jaguar/logs/bbp.log|hl -F -P'
+
+# alias whup='cd ~/develop/vanguard/jaguar ; docker compose up -d debug celery && tail -f data/jaguar/logs/bbp.log|hl -F -P'
+# alias whdown='(cd ~/develop/vanguard/jaguar ; docker compose down ; docker.prune)'
+
+alias whup=whup.sh
+alias whdown=whdown.sh
+
+alias whtest='(cd ~/develop/vanguard/jaguar ; docker compose up test)'
+alias whcov='(cd ~/develop/vanguard/jaguar ; docker compose up coverage)'
+alias whupdebug='(cd ~/develop/vanguard/jaguar ; dco up -d debug celery && dco logs -f debug)'
+alias cnjd='(cd ~/develop/vanguard/jaguar ; ./connect.sh jaguar-debug)'
+alias cnpsql='~/develop/vanguard/jaguar/connect.sh jaguar-psql'
+alias dpy='docker exec -it jaguar-debug python manage.py'
+alias adhoc='docker exec -it jaguar-debug python manage.py adhoc_task_handler'
+
+alias start_dash='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
+alias dashup='nvm use && npm i && sleep 1 && npm run generate && sleep 1 && ng.start'
+alias dashupci='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
+alias dashupl='ng.start'
+
+alias deploy.next='open /Users/dstokes/develop/vanguard/docs/DevOps/deployment/deploying_code_next.md'
+alias deploy='open /Users/dstokes/develop/vanguard/docs/DevOps/deployment/deploying_code.md'
+
+alias authorize_net_test='docker exec -it jaguar-debug python manage.py authorize_net_test'
+
+alias lw='list_webhook_data.sh'
+
+alias rdb=rdb.sh
+
+alias psql='psql -h localhost -p 5432 -U core -d '
+
+function ebt() {
+    export BEARER_TOKEN=$1
+    echo "BEARER_TOKEN='$BEARER_TOKEN'"
+}
+

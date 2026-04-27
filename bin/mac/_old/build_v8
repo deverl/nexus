@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+
+
+if [ -z "$runningFromCron" ]
+then
+    runningFromCron=0
+fi
+
+
+# Set this variable (debugScript) to 1 to turn on more diagnostic messages.
+debugScript=0
+
+#
+# This function prints out all of its arguments, on stderr, if debugScript is not zero.
+#
+
+dbgMsg()
+{
+    if [ $debugScript -ne 0 ]
+    then
+        echo "$*" >&2
+    fi
+}
+
+
+
+
+v8DownloadDir=v8-read-only
+
+tmpLogFile=/tmp/build_v8-temp.log
+
+
+# Grab the os name (type) so we can do a few things differently later.
+osName=$(uname)
+isDarwin=0
+
+
+if [ "$osName" = "Darwin" ]
+then
+    isDarwin=1
+    echo "OS X (Darwin) detected"
+fi
+
+
+
+# Grab the current user name. Will probably always be 'dstokes', but just in case
+# someone else uses this script...
+
+theUser=$(whoami)
+
+dbgMsg "Current user is: $theUser"
+
+
+
+
+if [ $isDarwin -eq 1 ]
+then
+    homeDir=/Users/$theUser
+else
+    homeDir=/home/$theUser
+fi
+
+
+dbgMsg "homeDir is $homeDir"
+
+
+if [ ! -d "$homeDir" ]
+then
+    echo "Home directory could not be detected" >&2
+    exit 1
+fi
+
+binDir=$homeDir/bin
+optDir=$homeDir/opt
+tmpDir=$homeDir/tmp
+
+dbgMsg "binDir is $binDir"
+dbgMsg "optDir is $optDir"
+dbgMsg "tmpDir is $tmpDir"
+
+
+if [ -d $optDir ]
+then
+    pushd $optDir  > /dev/null
+elif [ -d $tmpDir ]
+then
+    pushd $tmpDir > /dev/null
+else
+    echo "Can't discover a working directory" >&2
+    exit 1
+fi
+
+workingDir=$(pwd)
+
+
+dbgMsg "workingDir=$workingDir"
+# exit
+
+
+logFile=$workingDir/build_v8.log
+
+dbgMsg "logFile is $logFile"
+
+
+# Start with a fresh log file
+
+if [ -f "$logFile" ]
+then
+    rm -f "$logFile"
+fi
+
+
+
+echo "" | tee -a $logFile
+echo "=================================================================================" | tee -a $logFile
+echo "$($binDir/timestamp): Starting v8 download and build" | tee -a $logFile
+echo "" | tee -a $logFile
+
+
+# Grab the latest source.
+
+if [ -d $v8DownloadDir ]
+then
+    echo "Deleting previously existing $v8DownloadDir directory" | tee -a $logFile
+    rm -rf $v8DownloadDir
+fi
+
+if [ -f "$tmpLogFile" -o -d "$tmpLogFile" -o -L "$tmpLogFile" ]
+then
+    rm -rf "$tmpLogFile"
+fi
+
+
+if [ $runningFromCron -eq 1 ]
+then
+    svn checkout http://v8.googlecode.com/svn/trunk/  "$v8DownloadDir" 2>&1 > "$tmpLogFile"
+else
+    svn checkout http://v8.googlecode.com/svn/trunk/  "$v8DownloadDir" 2>&1 | tee "$tmpLogFile"
+fi
+
+
+revno=$(cat $tmpLogFile | grep -i "checked out revision" | sed 's/^[^0-9]*\([0-9][0-9]*\).*/\1/')
+
+mv $tmpLogFile $logFile
+# rm -rf "$tmpLogFile"
+
+
+dbgMsg "revision number is $revno"
+
+
+if [ ! -d "$v8DownloadDir" ]
+then
+    echo "Download must have failed! $v8DownloadDir doesn't exist" 2>&1 | tee -a $logFile
+    exit 1
+fi
+
+
+
+if [ -z "$revno" ]
+then
+    echo "Something went wrong and we didn't get a revision number." 2>&1 | tee -a $logFile
+    exit 1
+fi
+
+newDir=v8-$revno
+
+if [ -f $newDir.tgz -o -d $newDir ]
+then
+    # We already have downloaded this revision. We can quit now.
+    echo "$($binDir/timestamp): Revision $revno already downloaded. quitting" | tee -a $logFile
+    rm -rf $v8DownloadDir
+    exit 0
+fi
+
+mv $v8DownloadDir $newDir
+
+
+cd "$newDir"
+
+if [ $runningFromCron -eq 1 ]
+then
+    make dependencies >> $logFile 2>&1
+else
+    make dependencies 2>&1 | tee -a $logFile
+fi
+
+
+cd ..
+
+tar czf $newDir.tgz $newDir
+
+if [ $isDarwin -eq 1 ]
+then
+    mv $newDir.tgz $homeDir/opt/Dropbox/Install
+fi
+
+
+cd -
+
+
+if [ $runningFromCron -eq 1 ]
+then
+    make native >> $logFile 2>&1
+else
+    make native 2>&1 | tee -a $logFile
+fi
+
+
+
+if [ -f out/native/d8 ]
+then
+    if [ -d $binDir ]
+    then
+        echo "Copying d8 to $binDir" | tee -a $logFile
+        cp -f out/native/d8 $binDir/d8
+        chmod a+x $binDir/d8
+    fi
+else
+    echo "ERROR: out/native/d8 not found!" 2>&1 | tee -a $logFile
+fi
+
+ls -l -h $binDir/[dv]8 2>&1 >> $logFile
+
+echo "$($binDir/timestamp): Done. " | tee -a $logFile
+
+
+cd ..
+
+
+if [ $debugScript -eq 0 ]
+then
+    rm -rf "$newDir"
+fi
+
+
+
+popd > /dev/null
+

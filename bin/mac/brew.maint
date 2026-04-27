@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+brew unlinkapps --force
+
+brew cleanup
+
+brew linkapps --force
+
+if [ -d /usr/local/Cellar/qt ]
+then
+    brew unlinkapps --force qt
+    brew unlinkapps --force qt5
+fi
+
+brew doctor
+

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+for F in astylerc  \
+         inputrc   \
+         lscolors  \
+         vimrc     \
+         gvimrc
+do
+    cp -f ${F} /root/.${F}
+done
+

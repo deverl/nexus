@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]
+then
+    echo "ERROR: You must provide an IP address!"
+    exit 1
+fi
+
+curl -s http://ipinfo.io/$1?token=d0130e4f8fe179 | jq
+
+echo ""
+

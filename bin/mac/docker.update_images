@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+
+function green() {
+    if [ $# -gt 0 ]
+    then
+        # echo ""
+        echo -n -e "\x1B[1;32m" # green
+        echo "$1"
+        echo -n -e "\x1B[0m"
+    fi
+}
+
+
+
+if [ -d ~/Projects/docker/1 ]
+then
+    green "Making dsgcc"
+
+    cd ~/Projects/docker/1
+
+    make
+
+    docker push deverl/dsgcc:latest
+fi
+
+
+
+if [ -d ~/Projects/docker/2 ]
+then
+    green "Making dsphp"
+
+    cd ~/Projects/docker/2
+
+    make
+
+    docker push deverl/dsphp:latest
+fi
+
+
+
+if [ -d ~/Projects/docker/3 ]
+then
+    green "Making dsjdk"
+
+    cd ~/Projects/docker/3
+
+    make
+
+    docker push deverl/dsjdk:latest
+fi
+
+
+
+
+if [ -d ~/Projects/docker/dstokes-ubuntu ]
+then
+    green "Making dstokes-ubuntu"
+
+    cd ~/Projects/docker/dstokes-ubuntu
+
+    make
+
+    docker push deverl/dstokes-ubuntu
+fi
+
+
+
+
+if [ -d ~/Projects/graphql-attack ]
+then
+    green "Making graphql-attack"
+
+    cd ~/Projects/graphql-attack
+
+    bin/make
+
+    docker push deverl/graphql-attack:latest
+fi
+
+
+
+IMAGES=( $(docker images | cut -d ' ' -f 1 | grep -v REPOSITORY | uniq | sort) )
+
+for image in "${IMAGES[@]}"
+do
+    green "Pulling image for $image"
+    docker pull $image
+done
+

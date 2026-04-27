@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Install/update latest versions of nvm and then install npm, yarn, ncu and ng into each.
+
+source ~/nexus/bin/common/loadnvm
+
+# for V in 20 22 24
+for V in 22 24
+do
+    echo ""
+    echo $V
+    echo ""
+    nvm install $V
+    npm i -g npm yarn npm-check-updates @angular/cli typescript
+    echo  ""
+done
+
+nvm ls

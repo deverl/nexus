@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+if [ -f dep.txt ]
+then
+    rm -f dep.txt
+fi
+
+
+for F  in $(dpkg --get-selections | sed 's/[ \t]*install//')
+do
+    echo "Processing file: $F"
+
+    apt-rdepends $F >> dep.txt
+done
+
+

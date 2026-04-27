@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+#
+# Archives selected folders to the home iMac.
+#
+
+typeset -i do_arbackup=0
+typeset -r backupDir=opt/Seagate/Backup/DeVerl
+
+theServer=stokes-imac.local
+
+while [ $# -gt 0 ]
+do
+    if [ $1 == "-ar" -o $1 == "--do-arbackup" ]
+    then
+        do_arbackup=1
+    elif [ $1 == "-h" -o $1 == "--help" ]
+    then
+        echo "usage: doarchive [opts]"
+        echo ""
+        echo " opts: -ar, --do-arbackup    Runs ar.backup at the end."
+        echo "       -h, --help            Show this screen and exit."
+        echo ""
+        exit 0
+    else
+        echo "ERROR: Unrecognized argument: $1"
+        exit 1
+    fi
+
+    shift
+done
+
+
+function pingit {
+    results=$(ping -c 1 -t 5 ${theServer})
+    ### results=$(ping -c 1 -t 5 bodsimac.local &> /dev/null)
+    echo $?
+}
+
+echo -n "Trying ${theServer}..."
+ret=$(pingit)
+if [ ${ret} -eq 0 ]
+then
+    echo "got it!"
+else
+    echo " Can't find it. Exiting."
+    exit 1
+fi
+
+
+
+# echo ""
+# echo "Archiving Google Drive..."
+#
+# rsync -av                   \
+#       --executability       \
+#       --delete  -m          \
+#       --delete-excluded     \
+#       ~/nexus/ dstokes@${theServer}:nexus/
+
+
+
+echo ""
+echo ""
+echo "Archiving idrive..."
+
+rsync -av                           \
+      --executability               \
+      --delete  -m                  \
+      --delete-excluded             \
+      --exclude=".idrive"          \
+      --exclude=".idrive.cache"    \
+      ~/idrive/ dstokes@${theServer}:idrive/
+
+
+
+echo ""
+echo ""
+echo "Archiving ~/tmp/adasheriff directory..."
+
+ssh dstokes@${theServer} mkdir -p ${backupDir}/adasheriff/
+
+rsync -av \
+      --executability                   \
+      --delete   -m                     \
+      /Users/dstokes/tmp/adasheriff/    \
+      dstokes@${theServer}:${backupDir}/adasheriff/
+
+
+
+echo ""
+echo ""
+echo "Archiving Mail..."
+
+ssh dstokes@${theServer}        \
+    mkdir -p                    \
+    ${backupDir}/bodsmbp
+
+rsync -av               \
+      --delete -m       \
+      ~/Library/Mail/   \
+      dstokes@${theServer}:${backupDir}/bodsmbp/Mail/
+
+
+
+# echo ""
+# echo ""
+# echo "Archiving http..."
+#
+# ssh dstokes@${theServer}        \
+#     mkdir -p                    \
+#     ${backupDir}/bodsmbp/http
+#
+# rsync -av               \
+#       --executability   \
+#       /opt/http/        \
+#       dstokes@${theServer}:${backupDir}/bodsmbp/http/
+
+
+
+if [ ${do_arbackup} -eq 1 ]
+then
+    ar.backup
+fi
+
+
+echo "done."
+

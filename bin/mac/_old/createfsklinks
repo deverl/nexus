@@ -1,0 +1,295 @@
+#!/usr/bin/env bash
+
+###############################################################################
+#                                                                             #
+# This script creates symbolic links in the FSK application directory to      #
+# all of the known FSK applications (or at least, the ones we care about) in  #
+# their original locations.                                                   #
+#                                                                             #
+###############################################################################
+
+
+
+#
+# You can set verboseLog=1 if you want to see some log messages.
+# verboseLog can be set to 1 by specifying "-v" on the createfsklinks command
+# line.
+#
+
+typeset -i verboseLog=0
+
+#
+# This is the directory where (by default) Kinoma Create will look for its
+# FSK applications.
+# You can change this by using "-p <path>" on the createfsklinks command line.
+#
+
+fskAppDir=~/Library/Preferences/fsk/1/applications
+
+
+
+
+#
+# fskExcludes will be an array of all of the exclude apps specified on the
+# command line with -x.
+#
+# fskExcludes
+
+
+#
+# This function just echos all of its arguments to the console.
+# Only prints if verboseLog is not zero.
+#
+
+logmsg()
+{
+    if [ ${verboseLog} -ne 0 ]
+    then
+        echo $*
+    fi
+}
+
+
+
+#
+# This function just shows the usage and then exits. It returns 0 unless a
+# different value was passed in to it.
+#
+
+showUsage()
+{
+    ret=0
+
+    if [ $# -eq 1 ]
+    then
+        ret=$1
+    fi
+
+    echo ""
+    echo "usage: createfsklinks [-v] [-p <path>] [-x <appname>]"
+    echo ""
+    echo "  -v        : turns on verbose log messages"
+    echo ""
+    echo "  -p <path> : overrides the default FSK application directory with <path>"
+    echo ""
+    echo "  -x <app>  : excludes this app (does not create a symlink for it)."
+    echo "              <app> is just the basename (no directory components)."
+    echo "              -x <app> can be entered many times on the command line."
+    echo ""
+    echo "This script will create symbolic links for all of the known (or cared"
+    echo "about) FSK applications on the system."
+    echo "The symbolic links are created in the FSK application directory."
+    echo "You can override the default FSK application directory (target of the"
+    echo "sym links) by using the -p command line option"
+    echo ""
+
+    exit $ret
+}
+
+
+
+
+
+
+#
+# Process any command line options.
+#
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-v" ]
+    then
+        verboseLog=1
+    elif [ "$1" = "-p" ]
+    then
+        # Shift to get the next parameter.
+        shift
+
+        if [ $# -eq 0 ]
+        then
+            # Tell the user what they did wrong.
+            echo "ERROR: No value given for the -p option"
+
+            # Show the help and exit with error code 1
+            showUsage 1
+        fi
+
+        # There was at least one more command line parameter following the
+        # -p option. We will use it (whatever it is) as the FSK application
+        # directory.
+
+        fskAppDir=$1
+
+    elif [ "$1" = "-x" ]
+    then
+        # Shift to get the next parameter.
+        shift
+
+        if [ $# -eq 0 ]
+        then
+            # Tell the user what they did wrong.
+            echo "ERROR: No value given for the -x option"
+
+            # Show the help and exit with error code 1
+            showUsage 1
+        fi
+
+        # There was at least one more command line parameter following the
+        # -x option. We will use it (whatever it is) as an app exclude.
+
+        fskExcludes[${#fskExcludes[*]}]=$1
+
+    elif [ "$1" = "-h" ]
+    then
+        # Show the help and exit with success code of zero
+        showUsage
+    fi
+
+    shift
+done
+
+
+
+#
+# This stuff was just used to test the command line parameter handling.
+#
+
+typeset -i debugScript=0
+
+if [ $debugScript -eq 1 ]
+then
+    echo "verboseLog : $verboseLog"
+    echo " fskAppDir : $fskAppDir"
+
+    for e in ${fskExcludes[*]}
+    do
+       echo "Exclude: $e"
+    done
+
+    exit
+fi
+
+
+
+
+
+
+#############################################################################
+#
+# Begin the real work now!
+#
+
+
+#
+# This function determines if the specified value ($1) is in the exclude list.
+# It prints (returns) 1 if the value is in the exclude list. Otherwise zero
+# is returned.
+#
+
+shouldExclude()
+{
+    ret=0
+    typeset -i excludeIndex=0
+    typeset -i excludeCount=${#fskExcludes[*]}
+
+    if [ $# -ne 0 ]
+    then
+        while [ $ret -eq 0 -a $excludeIndex -lt $excludeCount ]
+        do
+            e="${fskExcludes[$excludeIndex]}"
+
+            if [ "$e" = "$1" ]
+            then
+                ret=1
+            fi
+
+            excludeIndex=${excludeIndex}+1
+
+        done
+    fi
+
+    echo $ret
+}
+
+
+
+
+
+#
+# Start by changing dir into the directory where Kinoma Create looks for its
+# applications.
+#
+
+if [ ! -d "${fskAppDir}" ]
+then
+    echo "ERROR: $fskAppDir does not exist!"
+    exit 1
+fi
+
+cd "${fskAppDir}"
+
+
+
+#
+# Find all of the symlinks in this directory and delete them.
+#
+
+curSymLinks=$(find . -type l -maxdepth 1 -print)
+
+for symLink in $curSymLinks
+do
+    logmsg "INFO: Deleting current symlink: $symLink"
+
+    unlink "$symLink"
+done
+
+
+
+#
+# Search for Kinoma apps in the following directories, in this order.
+#
+
+for D in ~/p4/kinoma/fsk/kinoma/kps/applications    	\
+         ~/opt/Dropbox/KinomaPrivate/KpsApps            \
+         ~/opt/Dropbox/KinomaPrivate/PrototypeApps      \
+         ~/opt/Dropbox/KinomaPrivate/Examples
+do
+    if [ -d "$D" ]
+    then
+        allDirs=$(find "$D" -type d -maxdepth 1 -print)
+
+        for theDir in $allDirs
+        do
+            # If the directory contains 'application.xml' at its root, we will
+            # assume that it is an FSK application.
+
+            if [ -d "$theDir" -a -f "$theDir/application.xml" ]
+            then
+                b=$(basename "$theDir")
+
+                excludeThisOne=$(shouldExclude "$b")
+
+                if [ $excludeThisOne -eq 1 ]
+                then
+                    logmsg "INFO: Excluding $b"
+                else
+                    if [ ! -L "$b" -a ! -f "$b" ]
+                    then
+                        logmsg "INFO: Creating: $b"
+                        logmsg "          From: $theDir"
+
+                        ln -s "$theDir"
+                    else
+                        logmsg "WARNING: $b already exists!"
+                        logmsg "         $theDir"
+                    fi
+                fi
+
+            else
+                logmsg "INFO: $theDir is not an FSK application"
+            fi
+
+        done
+    fi
+done
+

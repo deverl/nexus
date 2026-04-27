@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+sudo rm -rf /Library/PreferencePanes/MySQL.prefPane
+sudo rm -rf /Library/StartupItems/MySQLCOM/
+sudo rm -rf /usr/local/mysql*
+

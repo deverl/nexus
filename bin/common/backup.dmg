@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+TARGET_BASE_DIR=/Volumes/data/Backups
+
+if [ ! -d $TARGET_BASE_DIR ]
+then
+    echo "WARNING: $TARGET_BASE_DIR isn't mounted. Using shared directory"
+    TARGET_BASE_DIR=/Users/Shared/dstokes/Backups
+    if [ ! -d $TARGET_BASE_DIR ]
+    then
+    	mkdir -p $TARGET_BASE_DIR
+    fi
+fi
+
+TS=$(date +%Y-%m-%d-%H%M%S)
+
+TARGET_DIR=$TARGET_BASE_DIR/dmg/$TS
+
+TEMPDIR=/tmp/BKTEMP.$TS
+
+cd ~
+
+# Create a temporary copy of some items from ~/Library
+echo "Creating temp backups."
+mkdir -p $TEMPDIR/Library
+
+# Copy items from ~/Library that you want backed up into $TEMPDIR/Library
+ditto Library/Application\ Support/BBEdit           $TEMPDIR/Library/Application\ Support/BBEdit
+ditto Library/Application\ Support/beekeeper-studio $TEMPDIR/Library/Application\ Support/beekeeper-studio
+ditto Library/Application\ Support/Display\ Maid    $TEMPDIR/Library/Application\ Support/Display\ Maid
+# ditto Library/Application\ Support/EmTec            $TEMPDIR/Library/Application\ Support/EmTec
+ditto Library/Application\ Support/iTerm2           $TEMPDIR/Library/Application\ Support/iTerm2
+# ditto Library/Application\ Support/Postman          $TEMPDIR/Library/Application\ Support/Postman
+rsync -a --exclude=Partitions Library/Application\ Support/Postman/    $TEMPDIR/Library/Application\ Support/Postman/
+ditto Library/Application\ Support/TextMate         $TEMPDIR/Library/Application\ Support/TextMate
+# ditto Library/Application\ Support/ZOC8\ Files      $TEMPDIR/Library/Application\ Support/ZOC\ 8\ Files
+ditto Library/Preferences                           $TEMPDIR/Library/Preferences
+
+echo "Creating DMG file"
+
+mkdir -p $TARGET_DIR
+
+hdiutil create \
+        -volname dstokes            \
+        -skipunreadable             \
+        -srcfolder .bashrc          \
+        -srcfolder .bash_profile    \
+        -srcfolder .nexusrc         \
+        -srcfolder .ssh             \
+        -srcfolder Applications     \
+        -srcfolder Desktop          \
+        -srcfolder Documents        \
+        -srcfolder Install          \
+        -srcfolder Learning         \
+        -srcfolder $TEMPDIR/Library \
+        -srcfolder Movies           \
+        -srcfolder Music            \
+        -srcfolder Pictures         \
+        -srcfolder Postman          \
+        -srcfolder Projects         \
+        -srcfolder bin              \
+        -srcfolder develop          \
+        -srcfolder nexus            \
+        -srcfolder opt              \
+        -srcfolder tmp              \
+        $TARGET_DIR/dstokes.dmg
+
+echo "done."

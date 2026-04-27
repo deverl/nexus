@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+typeset -i debug=0
+dirName=""
+volName=""
+outDir=~/tmp
+
+if [ ! -d ${outDir} ]
+then
+    outDir=/tmp
+fi
+
+if [ $# -gt 2 ]
+then
+    dirName="$1"
+    volName="$2"
+    outDir="$3"
+elif [ $# -gt 1 ]
+then
+    dirName="$1"
+    volName="$2"
+elif [ $# -gt 0 ]
+then
+    dirName="$1"
+    volName="$1"
+fi
+
+if [ $debug -ne 0 ]
+then
+    echo "dirName = ${dirName}"
+    echo "volName = ${volName}"
+    echo "outDir = ${outDir}"
+fi
+
+if [ ! -z $dirName ]
+then
+    echo "Creating the DMG file in ${outDir}"
+
+    hdiutil create -volname ${volName} -srcfolder ${dirName} -ov -format UDZO ${outDir}/${volName}.dmg
+else
+    echo "usage: createdmg <dir> [<volname> [<outdir>]]"
+fi
+
+

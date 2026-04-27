@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [ -d chromite ]
+then
+    rm -rf chromite
+fi
+
+git clone https://chromium.googlesource.com/chromiumos/chromite
+

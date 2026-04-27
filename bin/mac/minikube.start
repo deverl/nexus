@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export KUBECONFIG=/Users/dstokes/.kube/config
+
+minikube start --vm-driver=virtualbox
+
+

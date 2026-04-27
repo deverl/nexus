@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+CONTAINERS=( $(docker container ls -a | grep -v CONTAINER | awk '{print $1}') )
+
+for container_id in "${CONTAINERS[@]}"
+do
+    echo "Stopping and removing container: $container_id"
+
+    docker container stop $container_id
+
+    docker container rm -f $container_id
+done
+
+docker container ls -a
+
+# NOTE: This could be done with this one liner, but I like to see each ID as it is terminated.
+# docker container rm -f $(docker container ls -a -q)
+
+

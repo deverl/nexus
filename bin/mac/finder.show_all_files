@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Turn on or off the setting in Finder to show all files.
+# The default is to turn on the setting. To turn it off, pass false, 0, n,
+# or N as a command line argument to the script.
+
+VALUE=true
+
+if [ $# -gt 0 ]
+then
+    if [ $1 = 'false' -o $1 = '0' -o $1 = 'n' -o $1 = 'N' ]
+    then
+        VALUE=false
+    fi
+fi
+
+# echo "VALUE = $VALUE"
+
+if [ $VALUE = 'true' ]
+then
+    echo "Finder will now show all files."
+else
+    echo "Finder will NOT show all files."
+fi
+
+defaults write com.apple.finder AppleShowAllFiles -bool $VALUE && osascript -e 'quit app "Finder"'
+

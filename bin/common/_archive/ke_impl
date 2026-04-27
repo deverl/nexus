@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ -d /opt/Komodo-Edit-8 ]
+then
+    export PATH=$PATH:/opt/Komodo-Edit-8/bin
+    komodo "$@" &
+elif [ -d ~/Applications/Komodo-Edit-8 ]
+then
+    export PATH=$PATH:~/Applications/Komodo-Edit-8/bin
+    komodo "$@" &
+elif [ -d /Applications/Komodo\ Edit\ 8.app ]
+then
+    open -a Komodo\ Edit\ 8 "$@"
+else
+    echo "ERROR: Couldn't find komodo app!"
+fi
+

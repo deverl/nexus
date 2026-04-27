@@ -1,0 +1,13 @@
+set autoindent
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set ignorecase
+set noerrorbells
+set visualbell
+set t_vb=
+set smarttab
+set nobackup
+set fileformat=unix
+set number
+syntax on

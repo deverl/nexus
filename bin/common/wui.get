@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+typeset -i do_copy=0
+
+function usage() {
+    echo ""
+    echo "usage: wui.get [opts]"
+    echo ""
+    echo "  opts:   -c, --copy      Copy into dirs under lntxweb2"
+    echo "          -h, --help      Show this screen and exit."
+    echo ""
+}
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-c" -o "$1" == "--copy" ]
+    then
+        do_copy=1
+    elif [ "$1" == "-h" -o "$1" == "--help" ]
+    then
+        usage
+        exit 0
+    fi
+
+    shift
+done
+
+cd ~/Downloads
+
+typeset -r wui=WUI-1.2
+typeset -r wuizip=${wui}.zip
+
+if [ -d $wui ]
+then
+    rm -rf $wui
+fi
+
+if [ -f $wuizip ]
+then
+    rm -f $wuizip
+fi
+
+curl https://codeload.github.com/srolfe26/WUI/zip/1.2 -o $wuizip
+
+typeset -i ret=$?
+
+if [ $ret -eq 0 -a -f $wuizip ]
+then
+    unzip $wuizip
+
+    if [ $do_copy -eq 1 ]
+    then
+        echo "Copying files..."
+
+        if [ -d $wui/dist/css ]
+        then
+            cp -vf $wui/dist/css/wui.css     ~/develop/lntxweb2/css/wui-1.2.css
+            cp -vf $wui/dist/css/wui.min.css ~/develop/lntxweb2/css/wui-1.2.min.css
+            cp -vf $wui/dist/wui.1.2.min.js  ~/develop/lntxweb2/include/js/wui.1.2.min.js
+        else
+            echo "Directory structure seems to be wrong!"
+        fi
+    fi
+else
+    echo "It appears that the download failed!"
+fi
+

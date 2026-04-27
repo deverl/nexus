@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+
+SELECTION="$1"
+
+# List of options
+DEFAULT_OPTIONS=("--none--" "acclhw" "advantagehw" "automotivedemo" "bbp" "bestday" "bhmp" "bhmptraining" "bighorn" "boatdemo" "builderdemo" "core" "defaultdb" "everdry" "firearmdemo" "gforce" "gsa" "homewi" "innohw" "lmcconstruction" "lmcctraining" "nrac" "nractraining" "oemdemo" "oemrc" "rc" "safepro" "steinel" "stronghouse" "trustpoint" "trustpointtraining" "yourextendservice")
+
+
+
+NAMESPACES=$(kubectl get namespaces | awk '{print $1}' | fgrep -v NAME)
+
+if [ -n "$NAMESPACES" ]
+then
+    OPTIONS=("--none--" $NAMESPACES)
+else
+    OPTIONS=$DEFAULT_OPTIONS
+fi
+
+
+
+MENU_TYPE="g"
+
+usage() {
+    echo ""
+    echo "usage: celery.start [opts] [database]"
+    echo "        opts: -h     Show this screen and exit"
+    echo "              -t     Use text menu"
+    echo "              -g     Use graphical menu (default)"
+    echo ""
+    exit 0
+}
+
+
+#!/usr/bin/env bash
+
+while getopts "ght" opt; do
+  case "$opt" in
+    g) MENU_TYPE=g ;;
+    h) usage ;;
+    t) MENU_TYPE=t;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+
+
+draw_dialog_menu() {
+    i=1
+    DIALOG_CMD_LINE="20 40 10 "
+    for opt in "${OPTIONS[@]:1}"; do          # skip first element
+        DIALOG_CMD_LINE+="$i $opt "
+        ((i++))
+    done
+    DIALOG_CMD_LINE=${DIALOG_CMD_LINE% }   # trim trailing space
+
+    CHOICE=$(dialog --menu "Pick One" $DIALOG_CMD_LINE 3>&1 1>&2 2>&3 3>&-)
+
+    printf "%s\n" "${OPTIONS[$CHOICE]}"
+}
+
+
+
+# Starting position
+selected=0
+
+draw_menu() {
+    clear
+    echo "Use ↑ and ↓ to move, ENTER to select:"
+    echo
+
+    for i in "${!OPTIONS[@]}"; do
+        if [[ $i == $selected ]]; then
+            # Highlight selected option
+            printf "\e[7m%s\e[0m\n" "${OPTIONS[$i]}"  # reverse video
+        else
+            printf "%s\n" "${OPTIONS[$i]}"
+        fi
+    done
+}
+
+
+is_in_options() {
+    local needle="$SELECTION"
+    local found=0
+
+    for opt in "${OPTIONS[@]}"; do
+        if [[ "$opt" == "$needle" ]]; then
+            found=1
+            break
+        fi
+    done
+
+    if [ $found -eq 0 ]
+    then
+        SELECTION=''
+    fi
+}
+
+
+get_selection() {
+    while true; do
+        draw_menu
+
+        # read a single keypress, including escape sequences
+        IFS= read -rsn1 key
+
+        if [[ $key == $'\x1b' ]]; then
+            # read two more chars for arrow keys: ESC [ A/B
+            read -rsn2 key
+            case $key in
+                '[A') ((selected--));;  # Up
+                '[B') ((selected++));;  # Down
+            esac
+        elif [[ $key == "" ]]; then   # ENTER
+            break
+        fi
+
+        # wrap around
+        ((selected < 0)) && selected=$((${#OPTIONS[@]} - 1))
+        ((selected >= ${#OPTIONS[@]})) && selected=0
+    done
+
+    clear
+
+    SELECTION=${OPTIONS[$selected]}
+}
+
+get_dialog_selection() {
+    SELECTION=$(draw_dialog_menu)
+    clear
+}
+
+if [ -n "$SELECTION" ]
+then
+    # A String was entered. Check if it is in our list of options.
+    # If it is not in our list of options, SELECTION will be set
+    # to an empty string.
+
+    is_in_options
+fi
+
+if [ -z "$SELECTION" ]
+then
+    # Either no db was entered on the command line, or it didn't match
+    # one of our choices. Present a menu to the user so they can
+    # select a valid db choice.
+
+    if [ "$MENU_TYPE" = "t" ]
+    then
+        get_selection
+    else
+        get_dialog_selection
+    fi
+
+    echo "You selected: $SELECTION"
+fi
+
+if [ "$SELECTION" = "--none--" ]
+then
+    exit 0
+fi
+
+cd ~/develop/vanguard/jaguar
+
+docker compose down celery
+
+# Show the starting db name
+
+grep "^DB_NAME=" dev_env
+
+# Edit the dev_env file, setting DB_NAME to the value of $SELECTION
+
+sed -i '' "s/^DB_NAME=.*/DB_NAME=$SELECTION/" dev_env
+
+# Show the updated db name in dev_env. Just for piece of mind.
+
+grep "^DB_NAME=" dev_env
+
+docker compose up -d celery
+
+# Edit the dev_env file, restoring DB_NAME to rc
+
+sed -i '' 's/^DB_NAME=.*/DB_NAME=rc/' dev_env
+
+# Show the final db name so we know it was restored.
+
+grep "^DB_NAME=" dev_env
+

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+CONTAINER_ID=$(docker ps | grep jaguar-debug | awk '{print $1}')
+
+if [ -z "$CONTAINER_ID" ]
+then
+    echo "ERROR: Can't find debug container ID."
+    exit 1
+fi
+
+echo "CONTAINER_ID = $CONTAINER_ID"
+
+docker exec -it $CONTAINER_ID /bin/bash
+
+

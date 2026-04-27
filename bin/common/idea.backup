@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+
+DESTDIR=~/idrive/Config/phpstorm-idea-backups
+
+mkdir -p ~/tmp/idea-backups
+
+for D in amordev amorprod sls-dev
+do
+    cd ~/develop/$D
+
+    echo -e "Backing up .idea directory from $D..."
+
+    TS=$(date +%Y%m%d%H%M)
+
+    tar cjf $DESTDIR/$D-$TS.tbz .idea/
+done
+
+
+ls -l -t $DESTDIR

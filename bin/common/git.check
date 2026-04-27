@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# This script checks for (and pulls) updates for several git repos.
+
+for D in ~/develop/tsheets-iop   ~/develop/tsheets-adp-run  ~/develop/tsheets-chrome-app
+do
+    if [ -d "$D" ]
+    then
+        cd "$D"
+
+        WD=$(pwd)
+
+        echo ""
+        echo "DIRECTORY: $WD"
+
+        git checkout develop
+
+        git pull -t
+
+        git checkout master
+
+        git pull -t
+    else
+        echo " SKIPPING: $D (doesn't exist)."
+    fi
+done
+
+echo ""
+
+
+for D in  ~/tmp/react-tutorial  ~/bin.local/arcanist/  ~/bin.local/libphutil ~/develop/tsync
+do
+    if [ -d "$D" ]
+    then
+        cd "$D"
+
+        WD=$(pwd)
+
+        echo ""
+        echo "DIRECTORY: $WD"
+
+        git pull -t
+    else
+        echo " SKIPPING: $D (doesn't exist)."
+    fi
+done
+
+echo ""
+
+

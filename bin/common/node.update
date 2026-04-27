@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# Checks for a newer version of node and installs it if one exists.
+# Also, uninstalls the most recent local version and sets the default
+# to the new version.
+
+
+# Make sure we have access to nvm.
+if [ -f /opt/homebrew/opt/nvm/nvm.sh ]
+then
+    export NVM_DIR="$HOME/.nvm"
+    source /opt/homebrew/opt/nvm/nvm.sh
+elif [ -f /usr/local/opt/nvm/nvm.sh ]
+then
+    export NVM_DIR="$HOME/.nvm"
+    source /usr/local/opt/nvm/nvm.sh
+elif [ "$(uname)" = "Linux" ]
+then # running on Linux
+    export NVM_DIR="/home/dstokes/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+fi
+
+# Get the version of the most recent local node.
+CUR_VER=$(nvm ls --no-colors | grep '^stable -> ' | awk '{print $5}')
+
+# Get the latest available version.
+LATEST_VER=$(nvm ls-remote --no-colors | tail -1 | sed 's/->//g' | awk '{print $1}')
+
+echo "CUR_VER = $CUR_VER, LATEST_VER = $LATEST_VER";
+
+if [ "$CUR_VER" = "" -o "$LATEST_VER" = "" ]
+then
+    echo "Missing a version! Stopping."
+    exit 1
+fi
+
+
+if [ "$CUR_VER" != "$LATEST_VER" ]
+then
+    echo ""
+    echo "Doing update to $LATEST_VER from $CUR_VER"
+    nvm install $LATEST_VER
+    nvm uninstall $CUR_VER
+    # nvm alias default $LATEST_VER
+else
+    echo "Already up to date at $CUR_VER"
+fi
+

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Turn off the Spotlight server.
+#
+# Author: Björn Habler
+#
+# Found on: http://www.sciencemedianetwork.org/Blog/20130321_Spotlight_fix
+#
+
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
+

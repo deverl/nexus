@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+scriptDir=$(dirname $0)
+
+# wish -geometry +200+100 $scriptDir/showfile.tcl "$@"
+wish $scriptDir/showfile.tcl "$@" -geometry "+200+100"
+

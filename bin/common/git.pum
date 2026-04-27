@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+source ~/nexus/bin/common/ansi
+
+B=$(git status | grep "^On branch" | sed 's/^On branch //')
+
+if [ "$B" = "master" ]
+then
+    BRANCH=master
+elif [ "$B" = "main" ]
+then
+    BRANCH=main
+else
+    print_red "ERROR: Not on main (or master) branch. Stopping."
+    exit
+fi
+
+echo ""
+print_green "Pulling from upstream $BRANCH"
+echo ""
+
+git pull upstream $BRANCH

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+d=$(dirname $0)
+
+python3 ${d}/getmacaddr.py "$@"
+
+# python ${d}/getmacaddr.py "$@"
+

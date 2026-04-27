@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+#
+# Show perforce change lists
+#
+
+typeset -i maxCount=1
+typeset -i showGlobal=0
+typeset -i verbose=0
+
+while [ $# -gt 0 ]
+do
+    if [ $1 == "-m" ]
+    then
+        shift
+        maxCount=$1
+    elif [ $1 == "-g" ]
+    then
+        showGlobal=1
+    elif [ $1 == "-v" ]
+    then
+        verbose=1
+    fi
+
+    shift
+done
+
+if [ $showGlobal -eq 1 ]
+then
+    if [ $verbose -eq 1 ]
+    then
+        p4 changelists -m $maxCount | awk '{ print $2, $4, $6 }'
+    else
+        p4 changelists -m $maxCount | awk '{ print $2 }'
+    fi
+else
+    if [ $verbose -eq 1 ]
+    then
+        p4 changelists -m $maxCount ./... | awk '{ print $2, $4, $6 }'
+    else
+        p4 changelists -m $maxCount ./... | awk '{ print $2 }'
+    fi
+fi
+

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ssh dstokes@ec2-34-209-128-248.us-west-2.compute.amazonaws.com
+

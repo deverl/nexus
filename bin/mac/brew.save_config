@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# This file will contain a list of all installed brew packages.
+LIST_PATH=~/idrive/Install/brew.list
+
+# This file will be a shell script that will restore all of the brew packages.
+SCRIPT_PATH=~/idrive/Install/brew.restore
+
+# Just make a list of all installed packages in this file.
+brew list > $LIST_PATH
+
+# Construct the restoration script.
+
+echo "#!/bin/bash" > $SCRIPT_PATH
+
+echo "#" >> $SCRIPT_PATH
+echo "# This script will restore all of the brew packages that were present the last" >> $SCRIPT_PATH
+echo "# time that brew.save_config was executed." >> $SCRIPT_PATH
+echo "#" >> $SCRIPT_PATH
+echo  "# NOTE: This file is machine generated. DO NOT EDIT!" >> $SCRIPT_PATH
+echo "#" >> $SCRIPT_PATH
+echo -n "# Last generated: " >> $SCRIPT_PATH
+date | tr "\n" " "  >> $SCRIPT_PATH
+echo -n " by: " >> $SCRIPT_PATH
+whoami >> $SCRIPT_PATH
+echo "#" >> $SCRIPT_PATH
+
+echo "" >> $SCRIPT_PATH
+
+echo -n "brew install " >> $SCRIPT_PATH
+
+cat $LIST_PATH | tr "\n" " " >> $SCRIPT_PATH
+echo "" >> $SCRIPT_PATH
+
+# Make sure the script is executable.
+chmod a+x $SCRIPT_PATH
+
+# Show the file entry.
+ls -l $SCRIPT_PATH
+

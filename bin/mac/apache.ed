@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+sudo open -a 'textmate' /etc/apache2/httpd.conf
+
+

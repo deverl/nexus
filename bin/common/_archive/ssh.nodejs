@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+ssh 53f56da35973ca9909000493@nodejs-ds6.rhcloud.com
+
+

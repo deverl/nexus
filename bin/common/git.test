@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+for D in *
+do
+    if [ -d "$D" ]
+    then
+        cd "$D"
+        if [ ! -d ".git" ]
+        then
+            echo "$D"
+        fi
+        cd ..
+    fi
+done
+

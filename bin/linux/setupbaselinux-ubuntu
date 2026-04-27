@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+
+sudo apt-get install -y \
+    ascii \
+    astyle \
+    bison \
+    build-essential \
+    bvi \
+    byacc \
+    cdecl \
+    cloc \
+    cmake \
+    curl \
+    cutils \
+    doxygen \
+    figlet \
+    flex \
+    gawk \
+    git \
+    gnupg \
+    golang \
+    hexdiff \
+    hexedit \
+    kotlin \
+    libgmp-dev \
+    libncurses-dev \
+    lua5.4 \
+    m4 \
+    p7zip-full \
+    pngtools \
+    pv \
+    ragel \
+    scons \
+    secure-delete \
+    sharutils \
+    silversearcher-ag \
+    splint \
+    splint-data \
+    sqlite3 \
+    sqlitebrowser \
+    tidy \
+    tmux \
+    tofrodos \
+    tree \
+    units \
+    vim \
+    zip \
+    zlib1g-dev \
+    zlib1g-dev
+
+
+#    ddd \
+#    geany \
+#    geany-plugins \
+#    ghex \
+#    openssh-server \
+
+
+
+
+if [ ! -d ~/.sdkman ]
+then
+    curl -s "https://get.sdkman.io" | bash
+    # sdk install java 25.0.2-open
+    # sdk install kotlin
+fi
+
+if [ ! -d ~/.fzf ]
+then
+    clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+fi
+
+

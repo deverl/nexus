@@ -1,0 +1,24 @@
+set autoindent
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set ignorecase
+set noerrorbells
+set visualbell
+set t_vb=
+set smarttab
+set nobackup
+set fileformat=unix
+if has("gui_running")
+  if has("gui_macvim")
+    set guifont=Menlo\ Regular:h13
+    set lines=60
+  elseif has("gui_gtk2")
+    set guifont=Monospace\ 10
+    set lines=55
+  elseif has("gui_win32")
+    set guifont=Consolas:h11:cANSI
+    set lines=60
+  endif
+endif
+set columns=110

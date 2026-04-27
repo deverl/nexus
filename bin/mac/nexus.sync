@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+
+typeset -i do_reverse=0
+typeset -i do_tsheets=1
+cmd_extra=""
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-r" -o "$1" == "--reverse" ]
+    then
+        do_reverse=1
+    elif [ "$1" == "-nots" -o "$1" == "--no-tsheets" ]
+    then
+        do_tsheets=0
+    else
+        echo "ERROR: Unrecognized option: $1"
+        exit 1
+    fi
+
+    shift
+done
+
+
+
+
+function do_rsync() {
+    SRC_DIR=""
+    DST_DIR=""
+    RSYNC_EXTRA=""
+
+    if [ $# -gt 0 ]
+    then
+        SRC_DIR=$1
+        shift
+    else
+        echo "ERROR: No SRC_DIR given!"
+        exit 1
+    fi
+
+    if [ $# -gt 0 ]
+    then
+        DST_DIR=$1
+        shift
+    else
+        echo "ERROR: No DST_DIR given!"
+        exit 1
+    fi
+
+    if [ $# -gt 0 ]
+    then
+        SERVER=$1
+        shift
+    fi
+
+    echo ""
+    echo ""
+    echo "Syncing ${SERVER}..."
+
+    rsync -av                               \
+      --exclude='.git*'                     \
+      --exclude '.gitignore'                \
+      --exclude '.DS_Store'                 \
+      --exclude='bin/cygwin/'               \
+      --exclude='bin/win/'                  \
+      --exclude='google/'                   \
+      --exclude='mac/'                      \
+      --exclude='mugs/'                     \
+      --exclude='rightscale/'               \
+      --exclude='unity/'                    \
+      --exclude='unix/'                     \
+      --exclude='Config/Android/'           \
+      --exclude='Config/apache/'            \
+      --exclude='Config/code/'              \
+      --exclude='Config/crontab/'           \
+      --exclude='Config/csh/'               \
+      --exclude='Config/zsh/'               \
+      --exclude='Config/Cygwin/'            \
+      --exclude='Config/eclipse/'           \
+      --exclude='Config/ent_unix/'          \
+      --exclude='Config/gnome/'             \
+      --exclude='Config/images/'            \
+      --exclude='Config/KeePassX/'          \
+      --exclude='Config/RightScale/'        \
+      --exclude='Config/SlickEdit/'         \
+      --exclude='Config/unison/'            \
+      --exclude='Config/upstart/'           \
+      --exclude='Config/win/'               \
+      --exclude='Config/mariner.router/'    \
+      --exclude='Config/belkin.txt'         \
+      --exclude='urls.txt'                  \
+      --exclude='eiamRefresh.log'           \
+      --delete                              \
+      --delete-excluded                     \
+      ${SRC_DIR} ${DST_DIR}
+}
+
+
+
+
+
+
+###############################################################################
+#                                   TSHEETS
+###############################################################################
+
+#                  shazweb{1..20}.tsheets.com    \
+#                  shilweb{1..20}.tsheets.com    \
+
+if [ $do_tsheets -eq 1 ]
+then
+    PRODUCTION_SERVERS=""
+
+    # echo "PRODUCTION_SERVERS: $PRODUCTION_SERVERS"
+
+    for SERVER in amorweb-prd                   \
+                  amorweb-dev                   \
+                  prod-bastion                  \
+                  dev-bastion                   \
+                  sls-dev                       \
+                  $PRODUCTION_SERVERS
+    do
+        if [ ${do_reverse} -eq 1 ]
+        then
+            SRC_DIR=${SERVER}:nexus/
+            DST_DIR=~/nexus/
+        else
+            SRC_DIR=~/nexus/
+            DST_DIR=${SERVER}:nexus/
+            cmd_extra="--delete"
+        fi
+
+        do_rsync ${SRC_DIR} ${DST_DIR} ${SERVER}
+    done
+fi
+
+
+
+exit
+
+
+
+###############################################################################
+#                                   DS6.US
+###############################################################################
+
+for SERVER in ds6.us
+do
+    if [ ${do_reverse} -eq 1 ]
+    then
+        SRC_DIR=dstokes@${SERVER}:nexus/
+        DST_DIR=~/idrive/nexus/
+    else
+        SRC_DIR=~/idrive/nexus/
+        DST_DIR=afford70@${SERVER}:nexus/
+    fi
+
+    do_rsync ${SRC_DIR} ${DST_DIR} ${SERVER}
+done
+
+

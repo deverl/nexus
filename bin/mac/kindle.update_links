@@ -1,0 +1,45 @@
+#!/usr/local/bin/zsh
+
+# set -x
+
+cd ~/idrive/Documents/Books/Books_MOBI
+
+booksDir=$(pwd)
+
+echo "booksDir = $booksDir"
+
+cd ~/Documents/My\ Kindle\ Content
+
+kindleDir=$(pwd)
+
+echo "kindleDir = $kindleDir"
+
+for F in $kindleDir/*
+do
+    if [ -h $F ]
+    then
+        echo "Removing symlink: $F"
+        rm -f $F
+    fi
+done
+
+
+for F in $booksDir/*.mobi
+do
+    bn=$(basename $F)
+
+    if [ -h $bn ]
+    then
+        echo "Removing symlink: $bn"
+        rm -f $bn
+    elif [ -f $bn ]
+    then
+        echo "Removing file: $bn"
+        rm -f $bn
+    fi
+
+    # echo "Copying file: $bn"
+    # cp $F .
+done
+
+

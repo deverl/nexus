@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+F=~/.ssh/id_rsa.pub
+
+function usage() {
+    echo ""
+    echo "usage: ssh.fingerprint [opts]"
+    echo ""
+    echo "    opts: -f, --input-file  <file>   Computer fingerprint for <file>"
+    echo "                                     Default is ~/.ssh/id_rsa.pub"
+    echo ""
+    echo "          -h, --help                 Print this screen then exit."
+    echo ""
+}
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-f" -o "$1" = "--input-file" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            F="$1"
+        else
+            echo "ERROR: No value given for --input-file!"
+            exit 3
+        fi
+    elif [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        usage
+        exit 0
+    else
+        echo "Unrecognized argument: $1"
+        exit 1
+    fi
+
+    shift
+done
+
+
+ssh-keygen -E md5 -lf $F
+
+

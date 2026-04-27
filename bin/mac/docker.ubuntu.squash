@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+docker-squash dstokes-ubuntu 2>&1 | tee /tmp/docker-squash-output.txt
+
+NEW_ID=$(cat /tmp/docker-squash-output.txt | grep "New squashed image ID" | sed 's/^.*image ID is //')
+
+echo ""
+echo "NEW_ID = $NEW_ID"
+echo ""
+
+docker image tag dstokes-ubuntu dstokes-ubuntu.old
+
+docker image tag $NEW_ID dstokes-ubuntu
+
+rm -f /tmp/docker-squash-output.txt
+

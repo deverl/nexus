@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+#
+# Script that allows putting, getting and deleting on Marvell's internal
+# ftp site.
+#
+
+
+ftpexe=ftp
+
+if [ -f /usr/bin/ftp ]
+then
+    ftpexe=/usr/bin/ftp
+fi
+
+typeset -a a_put=()
+typeset -a a_get=()
+typeset -a a_del=()
+
+SERVER="mrvl"
+USERNAME=""
+PASSWORD=""
+
+# cmd is 0 (put), 1, (get), or 2 (del). Default is put.
+typeset -i cmd=0
+
+
+function usage() {
+    echo ""
+    echo "usage: mftp [opts] <cmd> <file-list> [<cmd> <file-list>...]"
+    echo ""
+    echo " opts: -p, --put <fname>       Add <fname> to the list of files to put."
+    echo "       -g, --get <fname>       Add <fname> to the list of files to get."
+    echo "       -d, --del <fname>       Add <fname> to the list of files to delete."
+    echo "       -s, --server <name>     Use <name> as the ftp server (default: mrvl)."
+    echo "       -u, --user <name>       Use <name> as the ftp user (default from ~/.mftp)."
+    echo "       -w, --password <passwd> Use <passwd> as the password (default from ~/.mftp)."
+    echo "       -h, --help              Show this screen and exit."
+    echo ""
+    echo "notes: 1. ~/.mftp is in the form: username:password."
+    echo ""
+    exit 0
+}
+
+
+
+while [ $# -gt 0 ]
+do
+    if [ $1 == "-s" -o $1 == "--server" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            SERVER="$1"
+        else
+            echo "ERROR: No value given for --server!"
+            exit 1
+        fi
+    elif [ $1 == "-p" -o $1 == "--put" ]
+    then
+        cmd=0
+    elif [ $1 == "-g" -o $1 == "--get" ]
+    then
+        cmd=1
+    elif [ $1 == "-d" -o $1 == "--del" ]
+    then
+        cmd=2
+    elif [ $1 == "-u" -o $1 == "--user" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            USERNAME="$1"
+        else
+            echo "ERROR: No value given for --user!"
+            exit 1
+        fi
+    elif [ $1 == "-w" -o $1 == "--password" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            PASSWORD="$1"
+        else
+            echo "ERROR: No value given for --password!"
+            exit 1
+        fi
+    elif [ $1 == "-h" -o $1 == "--help" ]
+    then
+        usage
+    else
+        # Assume this is a file name.
+        if [ $cmd -eq 0 ]
+        then
+            a_put=("${a_put[@]}" "$1")
+        elif [ $cmd -eq 1 ]
+        then
+            a_get=("${a_get[@]}" "$1")
+        elif [ $cmd -eq 2 ]
+        then
+            a_del=("${a_del[@]}" "$1")
+        else
+            echo "ERROR: You need to specify -p, -g, or -d first!"
+            exit 1
+        fi
+    fi
+    shift
+done
+
+
+if [ ${#a_put[@]} -eq 0 -a ${#a_get[@]} -eq 0 -a ${#a_del[@]} -eq 0 ]
+then
+    echo ""
+    echo "ERROR: No files were specified!"
+    usage
+    exit 1
+fi
+
+
+if [ -z $USERNAME -o -z $PASSWORD ]
+then
+    if [ -f ~/.mftp ]
+    then
+        OIFS=$IFS
+        IFS=":"
+        s=$(cat ~/.mftp)
+        typeset -a a=($s)
+        USERNAME=${a[0]}
+        PASSWORD=${a[1]}
+        IFS=$OIFS
+    else
+        echo ""
+        echo "ERROR: username and/or password missing and ~/.mftp file is missing!"
+        usage
+        exit 1
+    fi
+fi
+
+LIST=""
+
+function add_to_list() {
+    if [ ${#LIST} -gt 0 ]
+    then
+        LIST="${LIST}
+"
+    fi
+    LIST="${LIST}$1 $2"
+}
+
+
+for F in ${a_put[@]}
+do
+    add_to_list put $F
+done
+
+for F in ${a_get[@]}
+do
+    add_to_list get $F
+done
+
+for F in ${a_del[@]}
+do
+    add_to_list del $F
+done
+
+### echo "LIST = $LIST"
+
+
+while [ $# -gt 0 ]
+do
+    if [ ${#LIST} -gt 0 ]
+    then
+        LIST="${LIST}
+"
+    fi
+
+    LIST="${LIST}put $1"
+    shift
+done
+
+
+### cat << EOS
+${ftpexe} -n ${SERVER} << EOS
+quote USER $USERNAME
+quote PASS $PASSWORD
+bin
+${LIST}
+quit
+EOS
+
+

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+#
+# This script will make a directory readable and writable by everyone.
+# The default group is "sharing", but can be changed on the command line
+#
+# The 'chmod' details were obtained from:
+#    http://xxxxxxxxxxxxxx
+#
+# There is another method, using NFS, outlined at:
+#    http://hints.macworld.com/article.php?story=20100202195536952
+#
+
+
+scriptName=$(basename "$0")
+grp=staff
+dirs=()
+
+while [ $# -gt 0 ]
+do
+    a="$1"
+    if [ "$a" = "-g" -o "$a" = "--group" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            grp="$1"
+        else
+            echo "ERROR: No value supplied for -group"
+            exit 1
+        fi
+    elif [ "$a" = "-h" -o "$a" = "--help" ]
+    then
+        echo ""
+        echo "usage: $scriptName [opts] <dir> [<dir2> ...]"
+        echo "  opts:"
+        echo "        -g <group>    Use <group> for the directories"
+        echo "        --group <group>"
+        echo ""
+        echo "        -h            Show this screen and exit"
+        echo "        --help"
+        echo ""
+        exit 0
+    else
+        dirs=( ${dirs[@]}  "$a" )
+    fi
+
+    shift
+done
+
+if [ ${#dirs[*]} -eq 0 ]
+then
+    dirs=( Sharing )
+fi
+
+echo "Using \"$grp\" as the group."
+
+# for d in "${dirs[@]}"
+# do
+#    echo "d = $d"
+# done
+#
+# exit 0
+
+for theDir in "${dirs[@]}"
+do
+    # bn=$(basename "$theDir")
+    # dn=$(dirname "$theDir")
+
+    # if [ ! -d "$dn" ]
+    if [ ! -d "$theDir" ]
+    then
+        sudo mkdir -p "$theDir"
+    fi
+
+    sudo chmod -R +a "group:$grp allow delete,readattr,writeattr,readextattr,writeextattr,list,search,add_file,add_subdirectory,delete_child,file_inherit,directory_inherit" "$theDir"
+done
+
+
+

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+TS=$(date +%Y-%m-%d_%H%M)
+
+ARCHIVE_DIR=~/tmp/data/$TS
+
+mkdir -p $ARCHIVE_DIR
+
+cd ~/develop/vanguard/jaguar
+
+tar cf /tmp/data.tar data
+
+cd /tmp
+
+xz -0 data.tar
+
+mv data.tar.xz $ARCHIVE_DIR
+
+cd $ARCHIVE_DIR
+
+ls -lh@
+

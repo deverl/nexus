@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+
+
+#
+# This function processes an array of arguments (with their parameters) and
+# sets variables accordingly.
+# The array is passed as the sole argument to this function.
+#
+
+set -x
+
+processArgs()
+{
+    if [ $# -gt 0 ]
+    then
+        arr=( "$@" )
+
+        typeset -i argIndex=0
+        typeset -i argCount=${#arr[*]}
+
+        if [ $# -ne 0 ]
+        then
+            while [ $argIndex -lt $argCount ]
+            do
+                arg="${arr[$argIndex]}"
+
+                echo "arg = $arg"
+
+                argIndex=${argIndex}+1
+
+            done
+        fi
+    else
+        echo "no args"
+    fi
+}
+
+
+
+
+
+
+someArgs[0]=-v
+someArgs[1]="-p /bozo"
+someArgs[2]="-x /Applications"
+someArgs[3]="The time has come"
+
+
+
+processArgs "${someArgs[@]}"
+

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+
+source ~/nexus/bin/common/ansi
+
+DIRS=$(find . -maxdepth 2 -type d -iname '.git' -print)
+
+for D in $DIRS
+do
+    pushd $D > /dev/null
+
+    cd ..
+
+    CURDIR=$(pwd)
+
+    print_bright_green "Working in directory ${CURDIR}"
+
+    du -hs .git
+
+    git prune
+
+    git gc
+
+    du -hs .git
+
+    popd > /dev/null
+
+    echo  ""
+done
+

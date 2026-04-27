@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+
+typeset -i integrate=0
+typeset -i verbose=0
+typeset -i quiet=0
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-i" ]
+    then
+        integrate=1
+    elif [ "$1" == "-q" ]
+    then
+        quiet=1
+    elif [ "$1" == "-v" ]
+    then
+        verbose=1
+    fi
+
+    shift
+done
+
+
+# echo "integrate = $integrate"
+# exit 0
+
+
+
+function do_integ()
+{
+    if [ $integrate -eq 1 -a $# -eq 1 ]
+    then
+        b="$1"
+        p4 integrate -d -i -b ${b}
+        p4 resolve -as
+        p4 submit -d "Merging using ${b}"
+    fi
+}
+
+
+#         ~/p4/sandstone/iron            \
+#         ~/p4/jssl/refui                \
+#         ~/p4/priv/carbon/mfp_demo      \
+#         ~/p4/alum/mfp_demo             \
+#         ~/p4/carbon/mfp_demo           \
+#         ~/p4/bauxite/mfp_demo          \
+#         ~/p4/sandstone/kinomadev       \
+#         ~/p4/priv/iron/kinomadev       \
+#         ~/p4/priv/pegasus              \
+#         ~/p4/pegasus                   \
+
+for D in ~/p4/komodo/mfp_demo            \
+         ~/p4/priv/komodo/mfp_demo       \
+         ~/p4/jssl/dev                   \
+         ~/p4/pegasus_unity              \
+         ~/p4/pegasus_dev                \
+         ~/Projects/pegwiz               \
+         ~/Projects/mprint_update_server \
+         ~/p4/genfw
+do
+    if [ -d ${D} ]
+    then
+        cd ${D}
+
+        echo ""
+        echo "PWD = $(pwd)"
+
+        if [ $quiet -eq 1 ]
+        then
+            p4 sync -q ./...#head
+        else
+            p4 sync ./...#head
+        fi
+
+        if [ $integrate -eq 1 ]
+        then
+            if [ "$(pwd)" = "$(realpath ~/p4/priv/iron/kinomadev)" ]
+            then
+                do_integ dstokes_priv_kinomadev_branch
+                p4 sync ./...#head
+            # elif [ "$(pwd)" = "$(realpath ~/p4/priv/carbon/mfp_demo)" ]
+            # then
+                # do_integ dstokes_priv_carbon_demo
+                # p4 sync ./...#head
+            # elif [ "$(pwd)" = "$(realpath ~/p4/priv/komodo/mfp_demo)" ]
+            # then
+                # do_integ dstokes_komodo_branch
+                # p4 sync ./...#head
+            fi
+        fi
+    else
+        if [ $verbose -eq 1 ]
+        then
+            echo "WARNING: Directory not found: ${D}!"
+        fi
+    fi
+done
+
+if [ -d ~/p4/zeno ]
+then
+    thisDir=$(pwd)
+
+    cd ~/p4/zeno
+
+    if [ -f sync_calico ]
+    then
+        echo ""
+        echo "Syncing Calico..."
+
+        ./sync_calico
+
+        echo ""
+    fi
+
+    cd ${thisDir}
+fi
+
+echo ""
+
+

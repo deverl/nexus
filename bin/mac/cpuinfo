@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+sysctl -n machdep.cpu.brand_string
+echo "Cores: $(sysctl -n hw.physicalcpu)"
+echo "Frequency: $(sysctl -n hw.cpufrequency)"
+

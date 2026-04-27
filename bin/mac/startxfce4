@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+% Xnest -geometry 1800x1140 :1 & DISPLAY=:1 ssh -X -Y dstokes@shorttoground startxfce4
+
+

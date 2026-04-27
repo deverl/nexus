@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -f /Applications/Carbon\ Copy\ Cloner.app/Contents/MacOS/ccc ]
+then
+    /Applications/Carbon\ Copy\ Cloner.app/Contents/MacOS/ccc --start="CCC Backup Task" --watch
+fi
+
+

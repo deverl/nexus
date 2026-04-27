@@ -1,0 +1,134 @@
+###################################################################
+# bashrc_common
+
+export HISTSIZE=10000
+export HISTFILESIZE=-1
+
+# My usual prompt
+export PS1='[\#]$ '
+
+# If you want the prompt to set the tab title to the cwd
+# export PS1='\[$(settitle "$PWD")\][\#]$ '
+
+
+###################################################################
+## grok.com gave me this solution to keep history from all open tabs.
+
+# Append to the history file instead of overwriting it
+shopt -s histappend
+
+# Larger history sizes (adjust as needed; -1 for unlimited)
+export HISTSIZE=100000
+export HISTFILESIZE=100000
+
+# Ignore duplicates and commands starting with space
+export HISTCONTROL=ignoredups:ignorespace
+
+# Append each command immediately and reload history from file for near-real-time sharing
+export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
+
+###################################################################
+
+
+# export P4CONFIG=.p4config
+
+function settitle() {
+    echo -n -e $"\033]0;$1\a"
+}
+
+
+pathContains()
+{
+    pclret="No"
+
+    pcl=$(echo $PATH | tr ":" "\n")
+
+    for p in $pcl
+    do
+        if [ "$p" = "$1" ]
+        then
+            pclret="Yes"
+        fi
+    done
+
+    echo "$pclret"
+}
+
+
+addToPath()
+{
+    while [ $# -gt 0 ]
+    do
+        D=$1
+
+        if [ -d "$D" -a "$(pathContains $D)" = "No" ]
+        then
+            export PATH=$PATH:"$D"
+        fi
+
+        shift
+    done
+}
+
+
+addToPath ~/bin
+addToPath ~/nexus/bin/common
+addToPath ~/go/bin
+
+if [ -f $HOME/.cargo/env ]
+then
+     source "$HOME/.cargo/env"
+fi
+
+export PATH
+
+set -o vi
+
+alias agl='ag -l -i -Q'
+alias f='df -h .'
+alias fl='head -n 1'
+alias showfuncs='declare -f | grep "^[a-zA-Z].* () *$" | sed "s/ *() *//g"'
+alias showallfuncs='declare -f | grep "^[a-zA-Z_].* () *$" | sed "s/ *() *//g"'
+alias hd='xxd -g 1'
+alias la='ls -A --color=auto'
+alias l='ls -CF'
+alias ll='ls -lF'
+alias llr='ls --color=always -lhR | grep --color=always -v "^d" | grep --color=always -v "^total" ; echo ""'
+alias ls='ls -FC --color=auto'
+alias whence='type -p'
+
+alias kc=kubectl
+
+alias cfd=cloudflared
+alias cfdt='cloudflared tunnel'
+
+alias cfmt='clang-format -i'
+
+alias git.show_tracked='git ls-tree -r master --name-only'
+alias git.diff_origin_master='git diff master origin/master'
+
+# alias s3cmd.marvell='s3cmd -c ~/.s3cfg-marvell'
+# alias s3cmd.myhr='s3cmd -c ~/.s3cfg-myhr'
+alias tidy='tidy -config ~/.tidy.conf'
+# alias svn.st="svn status | grep -v '^[?X]' | grep -v 'shared-libs'"
+
+alias qc='q -H -d, '
+
+# alias lint='composer lint'
+# alias phpstan='composer analyse'
+# alias unit='composer test'
+# alias utest='composer test'
+
+export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+
+# export SVN_EDITOR=vim
+
+source ~/nexus/bin/common/loadnvm
+
+if [ -d ~/.dvm ]
+then
+    export DVM_DIR="$(realpath ~/.dvm)"
+    export PATH="$DVM_DIR/bin:$PATH"
+fi
+
+

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+typeset -i compress=0
+typeset -i dryrun=0
+
+typeset -a flist=()
+
+recip="dstokes@tsheets.com"
+
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-c" -o "$1" == "--compress" ]
+    then
+        compress=1
+    elif [ "$1" == "-t" -o "$1" == "--send-to" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            recip="$1"
+        else
+            echo "ERROR: No value given for --send-to!"
+            exit 1
+        fi
+    elif [ "$1" == "-d" -o "$1" == "--dry-run" ]
+    then
+        dryrun=1
+    elif [ "$1" == "-h" -o "$1" == "--help" ]
+    then
+        echo ""
+        echo "usage: emailfile [opts] file [file...]"
+        echo ""
+        echo " opts: -c, --compress        Use gzip compression."
+        echo "       -t, --send-to <rcip>  Send file(s) to <rcip>."
+        echo "       -d, --dry-run         Just print what would be done."
+        echo "       -h, --help            Show this screen and exit."
+        echo ""
+        echo "notes: 1. Compression applies to all files."
+        echo "       2. Default recipient is dstokes@marvell.com"
+        echo ""
+        exit 1
+    else
+        ### flist="${flist} $1"
+        flist=("${flist[@]}" "$1")
+    fi
+    shift
+done
+
+### set -x
+
+if [ ${#flist} -gt 0 ]
+then
+    ### for F in ${flist}
+    for F in "${flist[@]}"
+    do
+        echo "Emailing \"$F\""
+        if [ ${compress} -eq 1 ]
+        then
+            if [ ${dryrun} -eq 1 ]
+            then
+                echo "dry-run: Emailing compressed file: \"$F\""
+            else
+                cat "${F}" | gzip -9 - | uuencode "${F}.gz" | \
+                    mailx -s "File: ${F}" "${recip}"
+            fi
+        else
+            if [ ${dryrun} -eq 1 ]
+            then
+                echo "dry-run: Emailing  file: \"$F\""
+            else
+                cat "${F}" | uuencode "${F}" | \
+                    mailx -s "File: ${F}" "${recip}"
+            fi
+        fi
+    done
+else
+    echo "ERROR: You must specify at least one file!"
+fi
+

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+cd ~/Downloads
+
+HASH=$(docker image ls | grep '^dstokes-ubuntu' | awk '{print $3;}')
+
+typeset -r TAR_FILE=dstokes-ubuntu-$(timestamp).tar
+
+echo "HASH = $HASH, TAR_FILE = $TAR_FILE"
+
+
+echo "exporting..."
+
+docker save -o $TAR_FILE $HASH
+
+
+echo "compressing..."
+
+bzip2 -9 $TAR_FILE
+
+
+echo "done."
+

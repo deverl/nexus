@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+startDir="."
+
+if [ $# -gt 0 ]
+then
+    startDir="$1"
+fi
+
+
+for l in $(find "$startDir" -type f -print)
+do
+    fp=$(realpath "$l")
+    bn=$(basename "$fp")
+    # echo "l = \"$l\", p = \"$p\""
+    detab "$fp" > /tmp/"$bn"
+    mv /tmp/"$bn" "$fp"
+done
+

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+##
+## Does a merge with no commit to the specified branch so that it is easy to diff in PhpStorm
+## If no branch is specified, the script tries to use the current branch (if it isn't main).
+##
+
+
+typeset -r GREEN="\x1B[1;32m"
+typeset -r RED="\x1B[1;31m"
+typeset -r RESET="\x1B[0m"
+
+BRANCH=""
+
+if [ $# -eq 1 ]
+then
+    ## The user specified something on the command line. See if it is a local branch.
+    BRANCH=$1
+    B2=$(git branch | grep "$BRANCH")
+    if [ "$B2" = "" ]
+    then
+        ## Not a local branch. Print an error message and terminate.
+        echo -e "${RED}Can't find branch named ${BRANCH}${RESET}"
+        exit 1
+    fi
+else
+    ## The user didn't give us a branch. Try to use the default branch.
+    BRANCH=$(git branch | fgrep '* ' | sed 's/* //')
+    if [ "$BRANCH" = "" ]
+    then
+        echo -e "${RED}No branch found!${RESET}"
+        exit 1
+    elif [ "$BRANCH" = "main" ]
+    then
+        echo -e "${RED}Can't use main branch!${RESET}"
+        exit 1
+    fi
+fi
+
+
+if [ "$BRANCH" = "" ]
+then
+    echo -e "${RED}No branch specified!${RESET}"
+    exit 1
+fi
+
+
+B2=$(git branch | grep "$BRANCH")
+if [ "$B2" != "" ]
+then
+    echo -e "Executing: ${GREEN}git checkout main && git merge --no-commit --no-ff ${BRANCH}${RESET}"
+    git checkout main && git merge --no-commit --no-ff "$BRANCH"
+else
+    echo -e "${RED}Can't find branch named ${BRANCH}${RESET}"
+fi

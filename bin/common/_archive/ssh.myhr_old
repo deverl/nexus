@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ssh dstokes@52.39.40.42
+

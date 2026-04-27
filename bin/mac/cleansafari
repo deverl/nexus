@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+srm -frs ~/Library/Safari ~/Library/Caches/com.apple.Safari
+

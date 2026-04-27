@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#
+# The command in this script was found on ubuntu.com at:
+# https://help.ubuntu.com/community/Postfix
+#
+
+sudo dpkg-reconfigure postfix
+

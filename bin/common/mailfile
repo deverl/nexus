@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ $# -gt 1 ]
+then
+    f="$1"
+    r="$2"
+
+    if [ -f $f ]
+    then
+        uuencode $f $f | mail -s $f $r
+    else
+        echo "File not found: $f"
+    fi
+else
+    echo "usage: mailfile <file1> <recipient>"
+fi
+

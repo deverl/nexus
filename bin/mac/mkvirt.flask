@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#
+# Script to configure a virtual environment in which we can run the
+# mprint update server web app.
+#
+
+virtEnvDir=~/Environments/python
+virtEnvName=flask_env
+
+
+echo "Creating directory structure..."
+
+mkdir -p ${virtEnvDir}
+
+cd ${virtEnvDir}
+
+
+echo "Removing residual environment..."
+
+rm -rf ${virtEnvName}
+
+
+echo "Creating the ${virtEnvName} virtual environment..."
+
+virtualenv --always-copy ${virtEnvName}
+
+
+echo "Activating the new environment..."
+
+source ${virtEnvName}/bin/activate
+
+
+echo "Installing Flask..."
+
+pip install flask
+
+
+echo "Installing flask-script..."
+
+pip install flask-script
+
+
+echo "Deactivating the new virtual environment..."
+
+deactivate
+
+
+echo "done."
+
+

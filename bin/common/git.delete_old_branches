@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git branch | grep -v -e master -e release | xargs git branch -D
+

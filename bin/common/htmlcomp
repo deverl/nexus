@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+java -jar ~/idrive/bin/common/htmlcompressor-1.5.3.jar "$@"
+

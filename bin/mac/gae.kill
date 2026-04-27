@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+pid=$(ps -ef | grep appserver | grep -v grep | awk '{ print $2 }')
+
+# echo "pid is \"$pid\""
+
+if [ "$pid" != "" ]
+then
+    # echo "pid is \"$pid\""
+    sudo kill -9 $pid
+else
+    echo "Not found!"
+fi
+
+

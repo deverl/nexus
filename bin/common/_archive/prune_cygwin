@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+python ~/Dropbox/Projects/prune_cygwin/prune_cygwin.py "$@"
+

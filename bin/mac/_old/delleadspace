@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 1 ]
+then
+    fil=$1
+
+    if [ -f $fil ]
+    then
+        tfil=/tmp/2349234920394
+
+        sed 's/^[[:space:]]*\(.*\)[[:space:]]*$/\1/' $fil > $tfil
+
+        mv $tfil $fil
+    else
+        echo "ERROR: Couldn't find file: $fil"
+    fi
+
+else
+    echo "ERROR: No file specified"
+fi
+
+

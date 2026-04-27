@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# runs the build_v8 script as scheduled from cron.
+# Just ensures that we start build_v8 from the correct directory.
+#
+
+scriptDir=$(dirname $0)
+runningFromCron=1
+
+export scriptDir
+export runningFromCron
+
+$scriptDir/build_v8
+
+

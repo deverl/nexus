@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+sudo launchctl unload -w  /System/Library/LaunchDaemons/com.apple.spindump.plist
+
+

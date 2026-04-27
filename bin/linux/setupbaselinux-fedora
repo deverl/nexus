@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+
+sudo dnf install -y \
+    ascii \
+    astyle \
+    bison \
+    bvi \
+    byacc \
+    bzip2 \
+    bzip3 \
+    cdecl \
+    clang \
+    cloc \
+    cmake \
+    curl \
+    doxygen \
+    figlet \
+    flex \
+    g++ \
+    gawk \
+    gcc \
+    git \
+    gmp-devel \
+    gnupg \
+    golang \
+    hexedit \
+    jq \
+    libtool \
+    lldb \
+    lnav \
+    ltrace \
+    lua5.1 \
+    m4 \
+    ncurses-devel \
+    php \
+    pv \
+    ragel \
+    ripgrep \
+    rsync \
+    scons \
+    sharutils \
+    sqlite3 \
+    sqlitebrowser \
+    strace \
+    swig \
+    tidy \
+    tmux \
+    tofrodos \
+    tree \
+    units \
+    unzip \
+    vim \
+    wget \
+    zip \
+    zlib-ng \
+    zlib-ng-compat \
+    zsh
+    
+sudo dnf groupinstall "Development Tools"
+sudo dnf install @development-tools
+sudo dnf builddep python3
+
+
+# Install sdkman
+
+if [ ! -d ~/.sdkman ]
+then
+    curl -s "https://get.sdkman.io" | bash
+    # sdk install java 25.0.2-open
+    # sdk install kotlin
+fi
+
+if [ ! -d ~/.fzf ]
+then
+    clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+fi
+
+

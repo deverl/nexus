@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+brew cleanup --prune=all -v
+

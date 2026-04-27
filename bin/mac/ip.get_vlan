@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+ifconfig | grep -B 3 10.110.0 | grep -A 4 VLAN | tail -n 1
+
+

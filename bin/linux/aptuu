@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+autoResponse=""
+
+
+while [ $# -gt 0 ]
+do
+    if [ $1 == "-y" ]
+    then
+        autoResponse="-y"
+    elif [ $1 == "-h" -o $1 == "--help" ]
+    then
+        echo ""
+        echo "usage: hbuu [opts]"
+        echo ""
+        echo "  opts:   -y              Auto respond with 'yes'."
+        echo "          -h, --help      Show this screen and exit."
+        echo ""
+        exit 0
+    else
+        echo "ERROR: Unrecognized option: $1!"
+        exit 1
+    fi
+
+    shift
+done
+
+
+# sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
+
+sudo apt-get update
+
+if [ $? -ne 0 ]
+then
+    echo "ERROR: update failed!"
+    exit 1
+fi
+
+
+sudo apt-get ${autoResponse} upgrade
+
+if [ $? -ne 0 ]
+then
+    echo "ERROR: upgrade failed!"
+    exit 1
+fi
+
+sudo apt-get ${autoResponse}  dist-upgrade
+
+
+if [ $? -ne 0 ]
+then
+    echo "ERROR: dist-upgrade failed!"
+    exit 1
+fi
+
+exit 0
+

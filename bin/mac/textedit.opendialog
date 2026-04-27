@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+VALUE=false
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "true" -o "$1" = "yes" -o "$1" = "1" -o "$1" = "y" -o "$1" = "Y" ]
+    then
+        VALUE=true
+    else
+        echo "ERROR: Unrecognized argument ($1)!"
+        exit 0
+    fi
+    shift
+done
+
+if [ "$VALUE" = "true" ]
+then
+    echo "Turning on option to use the Open File dialog when starting TextEdit"
+else
+    echo "Turning off the option to use the Open File dialog when starting TextEdit"
+fi
+
+defaults write -g NSShowAppCentricOpenPanelInsteadOfUntitledFile -bool $VALUE
+

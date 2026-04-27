@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+typeset -i COMPRESS=0
+
+SRC_DIR=~/Install/win/Cygwin
+
+if [ -d /Volumes/extra/Install/win/Cygwin ]
+then
+    DEST_DIR=/Volumes/extra/Install/win/Cygwin
+elif [ -d /Volumes/Expansion/Install/win/Cygwin ]
+then
+    DEST_DIR=/Volumes/Expansion/Install/win/Cygwin
+else
+    echo "ERROR: There is no destination directory mounted!"
+    exit 1
+fi
+
+if [ ! -d $DEST_DIR ]
+then
+    echo "ERROR: Destination directory is not mounted!"
+    exit 1
+fi
+
+
+cd $SRC_DIR
+cd ..
+
+TS=$(date "+%Y%m%d%H%M")
+
+
+if [ $COMPRESS -gt 0 ]
+then
+    FNAME=Cygwin-${TS}.tbz
+    tar cjf $DEST_DIR/$FNAME Cygwin
+else
+    FNAME=Cygwin-${TS}.tar
+    tar cf $DEST_DIR/$FNAME Cygwin
+fi
+
+ls -lh $DEST_DIR/$FNAME
+

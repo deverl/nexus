@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+df -h .
+
+DATA=( $(tmutil listlocalsnapshots /) )
+
+while [ ${#DATA[@]} -gt 0 ]
+do
+    tmutil thinlocalsnapshots / 30G 4
+
+    DATA=( $(tmutil listlocalsnapshots /) )
+done
+
+
+df -h .
+
+echo ""
+echo "done."
+echo ""
+

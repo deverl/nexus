@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+declare -f
+
+# declare -f | grep '^[a-zA-Z_].* () *$' | sed 's/ *() *//g'
+

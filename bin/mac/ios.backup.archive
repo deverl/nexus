@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+SRC_DIR=~/Library/Application\ Support/MobileSync/Backup
+ARCHIVE_DIR=/Volumes/extra/Archives/iPhone_Backup
+
+if [ ! -d "$SRC_DIR" ]
+then
+    echo "ERROR: Source directory ($SRC_DIR) doesn't exist!"
+    exit 3
+fi
+
+if [ ! -d $ARCHIVE_DIR ]
+then
+    echo "ERROR: Destination directory ($ARCHIVE_DIR) isn't mounted!"
+    exit 3
+fi
+
+cd "${SRC_DIR}"
+
+DS=$(date +"%Y-%m-%dT%H-%M")
+
+DEST_DIR=${ARCHIVE_DIR}/${DS}
+
+mkdir -p "${DEST_DIR}"
+
+for FNAME in *
+do
+    if [ "${FNAME}" != ".DS_Store" ]
+    then
+        echo "Copying ${FNAME} to ${DEST_DIR}"
+
+        time tar cf "${DEST_DIR}/${FNAME}.tar" "${FNAME}"
+    fi
+done
+

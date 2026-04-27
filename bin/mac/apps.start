@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+typeset -i ASYNC_START=0
+
+function usage() {
+    echo ""
+    echo "usage: apps.start [opts]"
+    echo ""
+    echo "       opts: -a, --async-start       start apps asynchronously"
+    echo "             -h, --help              show this screen and exit"
+    echo ""
+}
+
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-a" -o "$1" = "--async-start" ]
+    then
+        ASYNC_START=1
+    elif [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        usage
+        exit 0
+    else
+        echo "ERROR: Unrecognized argument ($1)"
+        usage
+        exit 1
+    fi
+
+    shift
+done
+
+
+open -a /System/Applications/App\ Store.app/
+
+for F in \
+    Amazon\ Music.app          \
+    App\ Cleaner\ 7.app        \
+    BBEdit.app                 \
+    Cyberduck.app              \
+    DaisyDisk.app              \
+    Dash.app                   \
+    DBeaver.app                \
+    Firefox.app                \
+    GitHub\ Desktop.app        \
+    Google\ Chrome\ Canary.app \
+    Google\ Chrome.app         \
+    iTerm.app                  \
+    Keyboard\ Maestro.app      \
+    Parallels\ Desktop.app     \
+    PixelStick.app             \
+    Postman.app                \
+    Slack.app                  \
+    TextMate.app               \
+    Transmit.app               \
+    Visual\ Studio\ Code.app   \
+    Zeplin.app                 \
+    zoom.us.app
+do
+    if [ -d /Applications/"$F" -o -d ~/Applications/"$F" ]
+    then
+        if [ $ASYNC_START -eq 1 ]
+        then
+            (open -a "$F") &
+        else
+            open -a "$F"
+        fi
+    else
+        echo "WARNING: $F not found!"
+    fi
+done
+
+##### Defunct #####
+# App\ Store.app
+# AppDelete.app
+# Amazon\ Music.app
+# Atom.app
+# BlueJeans.app
+# Brave\ Browser.app
+# calibre.app
+# DiffMerge.app
+# FormulatePro.app
+# Kindle.app
+# MySQLWorkbench.app
+# Opera.app
+# Parallels\ Desktop
+# Sequel\ Pro.app
+# Skype.app
+# SmartSVN\ 9.2.app
+# SourceTree.app
+# Spotify.app
+# SuperDuper!.app
+# uTorrent.app
+# VirtualBox.app
+# VMware\ Fusion.app
+# Waterfox.app
+# zoom.us.app
+
+# open -a Google\ Chrome https://github.com/sqlitebrowser/sqlitebrowser/releases
+# open -a Google\ Chrome http://www.tildesoft.com/
+
+cd ~/Applications
+
+open -a Microsoft\ AutoUpdate
+

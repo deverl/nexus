@@ -1,0 +1,20 @@
+--add-braces
+# --add-brackets
+--align-pointer=type
+--align-reference=type
+--attach-return-type
+--attach-return-type-decl
+--break-closing-braces
+--break-one-line-headers
+--convert-tabs
+--indent-col1-comments
+--indent=spaces=4
+--lineend=linux
+--pad-header
+--preserve-date
+--squeeze-lines=2
+--squeeze-ws
+--style=allman
+--suffix=none
+--unpad-paren
+

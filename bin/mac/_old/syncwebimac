@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+#
+# Keeps /Volumes/webimac/http in sync with /opt/http
+#
+
+unset DRY_RUN
+unset VERBOSE
+
+SRC=/opt/http/
+DEST=/Volumes/webimac/http/
+
+typeset -i dryrun=0
+typeset -i verbose=0
+typeset -i reverse=0
+
+
+while [ $# -gt 0 ]
+do
+    if [ $1 == "-d" -o $1 == "--dry-run" ]
+    then
+        DRY_RUN="--dry-run"
+        dryrun=1
+    elif [ $1 == "-v" -o $1 == "--verbose" ]
+    then
+        VERBOSE="--verbose"
+        verbose=1
+    elif [ $1 == "-r" -o $1 == "--reverse" ]
+    then
+        # Swap DEST and SRC.
+        TMPDEST=${DEST}
+        DEST=${SRC}
+        SRC=${TMPDEST}
+        unset TMPDEST
+        reverse=1
+    elif [ $1 == "-h" -o $1 == "--help" ]
+    then
+        echo ""
+        echo "usage: syncwebimac [opts]"
+        echo ""
+        echo "    opts:   -d, --dry-run       show what would have been transferred."
+        echo "            -r, --reverse       sync from external to internal."
+        echo "                                Default is from internal to external."
+        echo "            -v, --verbose       increase verbosity."
+        echo "            -h, --help          show this screen and exit."
+        echo ""
+        exit 0
+    fi
+
+    shift
+done
+
+if [ ${verbose} -eq 1 ]
+then
+    echo "SRC = ${SRC}, DEST = ${DEST}"
+fi
+
+
+# sudo rsync --recursive \
+#            --owner \
+#            --group \
+#            --perms \
+#            --executability \
+#            --times \
+#            /opt/http/ /Volumes/webimac/http/
+
+
+sudo rsync --archive \
+           --executability \
+           --exclude=.DS_Store \
+           --delete \
+           ${DRY_RUN} ${VERBOSE} \
+           ${SRC} ${DEST}
+

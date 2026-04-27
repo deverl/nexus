@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]
+then
+    echo "ERROR: No file name given!"
+    exit 1
+fi
+
+if [ ! -f ~/.password ]
+then
+    echo "ERROR: ~/.password file is missing!"
+    exit 1
+fi
+
+PASSWD=$(cat ~/.password)
+
+LIST=""
+
+while [ $# -gt 0 ]
+do
+    if [ ${#LIST} -gt 0 ]
+    then
+        LIST="${LIST}
+"
+    fi
+
+    LIST="${LIST}del $1"
+    shift
+done
+
+
+### cat << EOS
+ftp -n mrvl << EOS
+quote USER dstokes
+quote PASS $PASSWD
+${LIST}
+quit
+EOS
+
+

@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+#
+# This script changes the perforce symbolic link to point at the next actual P4v directory.
+#
+
+perforceLinkParent=/opt
+perforceBitsParent=/opt
+
+cd ${perforceLinkParent}
+
+
+
+#
+# This function actually performs the changing of the sym link.
+#
+
+changeLink()
+{
+    typeset -i ret=0
+
+    if [ -n "$1" -a -d "$1" ]
+    then
+        newDir=$1
+
+        sudo unlink perforce
+
+        sudo ln -s "${newDir}" perforce
+
+        newLink=$(readlink perforce)
+
+        if [ "${newDir}" = "${newLink}" ]
+        then
+            ret=1
+        fi
+    else
+        echo "ERROR: changeLinks must be given a directory name." >&2
+    fi
+
+    echo $ret
+}
+
+
+
+p4vDirs=$(find ${perforceBitsParent} -maxdepth 1 -type d -iname 'p4v-2*' -print)
+
+curP4vDir=$(realpath $(readlink perforce))
+
+# echo "curP4vDir is $curP4vDir"
+
+firstP4vDir=""
+
+assignP4v=0
+
+echo "Initial perforce directory is $(readlink perforce)"
+
+for D in $p4vDirs
+do
+    a=$(realpath $D)
+    b=$(basename $D)
+
+    # echo "a = $a, b = $b"
+
+    if [ $assignP4v -eq 1 ]
+    then
+        # echo "Calling changeLink $a"
+
+        ret=$(changeLink $a)
+
+        # echo "ret = $ret"
+
+        if [ $ret -eq 0 ]
+        then
+            echo "changeLink failed!" >&2
+        fi
+
+        echo "  Final perforce directory is $(readlink perforce)"
+
+        exit 0
+    fi
+
+    if [ "$firstP4vDir" = "" ]
+    then
+        firstP4vDir=$a
+    fi
+
+    if [ $curP4vDir = $a ]
+    then
+        # We are currently using this directory as the perforce directory.
+        # We want to switch to use the next one in the list.
+        # If this is the last entry in the list, we will revert back and
+        # use the first entry in the list.
+
+        assignP4v=1
+    fi
+done
+
+
+# If we get to this point, we must have been pointing at the last item in
+# the list. So, we will use the first item from the list.
+
+# echo "firstP4vDir = $firstP4vDir"
+
+# echo "Calling changeLink $firstP4vDir"
+
+ret=$(changeLink "${firstP4vDir}")
+
+if [ $ret -eq 0 ]
+then
+    echo "changeLink failed!" >&2
+fi
+
+echo "  Final perforce directory is $(readlink perforce)"
+
+exit 0
+
+
+

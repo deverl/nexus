@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+for F in *
+do
+    if [ -d "$F" ]
+    then
+        if [ "${F}" != "." -a "${F}" != ".." ]
+        then
+            N=$(find "${F}" -type f -print | wc -l)
+            ### echo "Directory ${F} contains ${N} files"
+            if [ ${N} -eq 0 ]
+            then
+                echo "Removing empty directory: ${F}"
+                rm -rf "${F}"
+            fi
+        fi
+    fi
+done
+

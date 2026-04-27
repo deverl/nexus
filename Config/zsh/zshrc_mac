@@ -1,0 +1,137 @@
+###################################################################
+# zshrc_mac
+
+if [ -f ~/nexus/Config/zsh/zshrc_common ]
+then
+    source ~/nexus/Config/zsh/zshrc_common
+fi
+
+export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+
+if [ -d /opt/homebrew ]
+then
+    HOMEBREW_BASE_DIR=/opt/homebrew
+elif [ -d /usr/local ]
+then
+    HOMEBREW_BASE_DIR=/usr/local
+else
+    unset HOMEBREW_BASE_DIR
+fi
+
+
+addToPath ~/nexus/bin/mac
+addToPath ~/bin
+addToPath ~/nexus/bin/sigmasense
+addToPath ~/bin.local
+addToPath /usr/local/bin
+
+# if [ -d /opt/systemc ]
+# then
+#     export SYSTEMC_HOME=/opt/systemc
+#     export SYSTEMC=${SYSTEMC_HOME}
+#     export SYSTEMC_ARCH=macosx64
+#
+#     launchctl setenv SYSTEMC_HOME ${SYSTEMC_HOME}
+#     launchctl setenv SYSTEMC ${SYSTEMC_HOME}
+#     launchctl setenv  SYSTEMC_ARCH macosx64
+# fi
+
+
+# Ensure that brew managed packages come first!
+if [ -n "$HOMEBREW_BASE_DIR" ]
+then
+    PATH=$HOMEBREW_BASE_DIR/sbin:$PATH
+    PATH=$HOMEBREW_BASE_DIR/bin:$PATH
+fi
+
+# The next line updates PATH for the Google Cloud SDK.
+# if [ -f '/Users/dstokes1/google-cloud-sdk/path.bash.inc' ]; then . '/Users/dstokes1/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+# if [ -f '/Users/dstokes1/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/dstokes1/google-cloud-sdk/completion.bash.inc'; fi
+
+launchctl setenv GOOGLE_API_KEY "AIzaSyAF9C2UR_aG9zsyosQZwfNqPJ1j0DObIK8"
+launchctl setenv GOOGLE_DEFAULT_CLIENT_ID "1095638945741-tvcd4b9hfttj70jjh9ptih38grgchn4q.apps.googleusercontent.com"
+launchctl setenv GOOGLE_DEFAULT_CLIENT_SECRET "ZhjrMwyGzmzTbL6yh6COvgAh"
+
+export GOOGLE_API_KEY="AIzaSyAF9C2UR_aG9zsyosQZwfNqPJ1j0DObIK8"
+export GOOGLE_DEFAULT_CLIENT_ID="1095638945741-tvcd4b9hfttj70jjh9ptih38grgchn4q.apps.googleusercontent.com"
+export GOOGLE_DEFAULT_CLIENT_SECRET="ZhjrMwyGzmzTbL6yh6COvgAh"
+
+# alias e='open -a smultron\ 6'
+# alias e='open -a Smultron\ 7'
+alias e='open -a BBEdit'
+alias textmate='open -a TextMate'
+# alias e='open -a Tincta'
+
+if [ -n "$HOMEBREW_BASE_DIR" ]
+then
+    alias g++=$HOMEBREW_BASE_DIR/bin/g++-15
+    alias gcc=$HOMEBREW_BASE_DIR/bin/gcc-15
+fi
+
+# alias cal='gcal'
+alias cd.iosbackup='cd ~/Library/Application\ Support/MobileSync/Backup; pwd'
+# alias d8s='d8 --shell'
+alias d8s='rlwrap d8'
+if [ -n "$HOMEBREW_BASE_DIR" ] && [ -f $HOMEBREW_BASE_DIR/keepassc ]
+then
+    alias kp='keepassc'
+fi
+# alias hbuu='brew update && brew upgrade --all'
+alias hbuu='brew update && brew upgrade && date'
+alias hbuun='brew update && brew upgrade --dry-run'
+# alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date && mkdir -p /usr/local/etc/my.cnf.d'
+alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date'
+alias ll='ls -lO -F -G'
+alias ls='ls -FCG'
+alias llc='eza -lghSH'
+alias word='open -a Microsoft\ Word'
+alias excel='open -a Microsoft\ Excel'
+alias powerpoint='open -a Microsoft\ Powerpoint'
+alias tar='COPYFILE_DISABLE=true tar'
+alias tree='tree -C'
+
+alias numbers='open -a Numbers'
+alias pages='open -a Pages'
+
+alias doc='open -a Docker.app'
+
+alias dco='docker compose'
+alias dcr='docker compose run -it --rm'
+alias kcn='kubens'
+alias kct='kubectl'
+alias kcx='kubectx'
+alias mgitb='git branch|grep dstokes'
+
+if [ -n "$HOMEBREW_BASE_DIR" ] && [ -f $HOMEBREW_BASE_DIR/vim ]
+then
+    alias vi='vim'
+fi
+
+if [ -f "$(brew --prefix 2>/dev/null)/etc/profile.d/z.sh" ] && \
+   [ "$(brew --prefix)/etc/profile.d/z.sh" -nt ~/nexus/bin/common/z.sh ]
+then
+    echo "WARNING: Your local copy of z.sh is out of date!"
+fi
+
+source ~/nexus/bin/common/z.sh
+
+source <(fzf --zsh)
+
+# Zsh completion (replaces bash_completion.sh)
+if [ -n "$HOMEBREW_BASE_DIR" ]
+then
+    fpath=("$HOMEBREW_BASE_DIR/share/zsh/site-functions" $fpath)
+fi
+zstyle :compinstall filename "${ZDOTDIR:-$HOME}/.zshrc"
+autoload -Uz compinit
+compinit -C
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+if [ -f ~/.zshrc_local ]
+then
+    source ~/.zshrc_local
+fi
+
+export PATH

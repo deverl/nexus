@@ -1,0 +1,155 @@
+
+typeset -r RESET=$'\e[0m'
+typeset -r BRIGHT=$'\e[1m'
+typeset -r DIM=$'\e[2m'
+typeset -r UNDERLINE=$'\e[4m'
+typeset -r BLINK=$'\e[5m'
+typeset -r INVERTED=$'\e[7m'
+typeset -r HIDDEN=$'\e[8m'
+
+
+## Foreground colors
+
+typeset -r FG_DEFAULT=$'\e[39m'
+typeset -r FG_BLACK=$'\e[30m'
+typeset -r FG_RED=$'\e[31m'
+typeset -r FG_GREEN=$'\e[32m'
+typeset -r FG_YELLOW=$'\e[33m'
+typeset -r FG_BLUE=$'\e[34m'
+typeset -r FG_MAGENTA=$'\e[35m'
+typeset -r FG_CYAN=$'\e[36m'
+typeset -r FG_LIGHT_GRAY=$'\e[37m'
+typeset -r FG_DARK_GRAY=$'\e[90m'
+typeset -r FG_LIGHT_RED=$'\e[91m'
+typeset -r FG_LIGHT_GREEN=$'\e[92m'
+typeset -r FG_LIGHT_YELLOW=$'\e[93m'
+typeset -r FG_LIGHT_BLUE=$'\e[94m'
+typeset -r FG_LIGHT_MAGENTA=$'\e[95m'
+typeset -r FG_LIGHT_CYAN=$'\e[96m'
+typeset -r FG_WHITE=$'\e[97m'
+
+typeset -r FG_BRIGHT_RED="${FG_RED}${BRIGHT}'
+typeset -r FG_BRIGHT_GREEN="${FG_GREEN}${BRIGHT}'
+typeset -r FG_BRIGHT_YELLOW="${FG_YELLOW}${BRIGHT}'
+
+
+## Backgroundcolors
+
+typeset -r BK_DEFAULT=$'\e[49m'
+typeset -r BK_BLACK=$'\e[40m'
+typeset -r BK_RED=$'\e[41m'
+typeset -r BK_GREEN=$'\e[42m'
+typeset -r BK_YELLOW=$'\e[43m'
+typeset -r BK_BLUE=$'\e[44m'
+typeset -r BK_MAGENTA=$'\e[45m'
+typeset -r BK_CYAN=$'\e[46m'
+typeset -r BK_LIGHT_GRAY=$'\e[47m'
+typeset -r BK_DARK_GRAY=$'\e[100m'
+typeset -r BK_LIGHT_RED=$'\e[101m'
+typeset -r BK_LIGHT_GREEN=$'\e[102m'
+typeset -r BK_LIGHT_YELLOW=$'\e[103m'
+typeset -r BK_LIGHT_BLUE=$'\e[104m'
+typeset -r BK_LIGHT_MAGENTA=$'\e[105m'
+typeset -r BK_LIGHT_CYAN=$'\e[106m'
+typeset -r BK_WHITE=$'\e[107m'
+
+
+function print_red() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_RED}${msg}${RESET}"
+    fi
+}
+
+function print_green() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_GREEN}${msg}${RESET}"
+    fi
+}
+
+function print_yellow() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_YELLOW}${msg}${RESET}"
+    fi
+}
+
+function print_blue() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_BLUE}${msg}${RESET}"
+    fi
+}
+
+function print_magenta() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_MAGENTA}${msg}${RESET}"
+    fi
+}
+
+function print_cyan() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_CYAN}${msg}${RESET}"
+    fi
+}
+
+function print_bright_red() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_RED}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+function print_bright_green() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_GREEN}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+function print_bright_yellow() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_YELLOW}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+function print_bright_blue() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_BLUE}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+function print_bright_magenta() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_MAGENTA}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+function print_bright_cyan() {
+    if [ "$1" != "" ]
+    then
+        msg=$1
+        echo "${FG_CYAN}${BRIGHT}${msg}${RESET}"
+    fi
+}
+
+
+
+

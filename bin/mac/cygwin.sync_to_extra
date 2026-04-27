@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Sync the Cygwin installation directory from the local drive to the 'extra' drive.
+
+SRC_DIR=~/Install/win/Cygwin/
+DEST_DIR=/Volumes/extra/Install/win/Cygwin/
+
+if [ ! -d $DEST_DIR ]
+then
+    echo "ERROR: Destination directory is not mounted!"
+    exit 1
+fi
+
+rsync -av                       \
+      --exclude='.DS_Store'     \
+      --delete-excluded         \
+      $SRC_DIR                  \
+      $DEST_DIR
+

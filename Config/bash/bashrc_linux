@@ -1,0 +1,55 @@
+###################################################################
+# bashrc_linux
+
+if [ -f ~/nexus/Config/bash/bashrc_common ]
+then
+    source ~/nexus/Config/bash/bashrc_common
+fi
+
+addToPath ~/nexus/bin/linux
+# addToPath ~/nexus/bin/tsheets
+addToPath /usr/local/go/bin
+
+addToPath /sbin
+# addToPath /usr/local/ch/bin
+
+export PATH
+
+if [ -f ~/nexus/bin/common/z.sh ]
+then
+    source ~/nexus/bin/common/z.sh
+fi
+
+if [ -f "$HOME/.cargo/env" ]
+then
+    source "$HOME/.cargo/env"
+fi
+
+
+alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date'
+alias hbuun='brew update && brew upgrade --dry-run'
+
+export PS1='[\h \#]$ '
+
+### export PROMPT_COMMAND="history -a; history -c; history -r"
+
+
+# If we are running on a computer on the tsheets domain, source the bashrc_tsheets file.
+# if [[ $(hostname) =~ tsheets ]]
+# then
+    # source ~/nexus/Config/bash/bashrc_tsheets
+# fi
+
+
+
+# Last thing to do. Source ~/.nexusrc if it exists. This gives us a chance
+# override any of the standard configuration items.
+
+if [ -f ~/.bashrc_local ]
+then
+    source ~/.bashrc_local
+fi
+
+export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+
+

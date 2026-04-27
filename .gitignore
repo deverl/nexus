@@ -1,0 +1,15 @@
+.DS_Store
+Books/
+Install/
+ISO/
+Movies/
+tmp/
+unity/
+Projects/
+Documents/
+.d8_history
+rotor/
+*.gsheet
+*.gmap
+eiamRefresh.log
+eiamRefresh3.log

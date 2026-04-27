@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ssh -i ~/.ssh/digital_ocean_key root@24.199.111.51
+

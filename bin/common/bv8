@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+v8DownloadDir=v8-read-only
+
+if [ -d "$v8DownloadDir" ]
+then
+    rm -rf "$v8DownloadDir"
+fi
+
+echo "========================================================================"
+echo "Starting svn checkout..."
+
+svn checkout http://v8.googlecode.com/svn/trunk/  "$v8DownloadDir"
+
+echo "========================================================================"
+echo "Done with svn checkout."
+
+du -hs $v8DownloadDir
+
+cd "$v8DownloadDir"
+
+echo "========================================================================"
+echo "Starting make dependencies..."
+
+make dependencies
+
+echo "========================================================================"
+echo "Starting make native..."
+
+make native
+
+if [ -f out/native/d8 ]
+then
+    cp -f out/native/d8 ~/bin/
+else
+    echo "ERROR: out/native/d8 does not exist!"
+    exit 1
+fi
+
+

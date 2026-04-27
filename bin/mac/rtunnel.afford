@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+typeset -i show_log=0
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-l" -o "$1" == "--show-log" ]
+    then
+        show_log=1
+    else
+        echo "ERROR: Unrecognized option: $1"
+        exit 1
+    fi
+    shift
+done
+
+if [ ${show_log} -eq 1 ]
+then
+    ssh -nNT -R 9028:localhost:9000 afford70@ds6.us \
+        "tail -f /var/log/tsheets-app /var/log/tsheets-dcm /var/log/apache2/tsheets.com/error.log | egrep --line-buffered 'dstokes|qa'"
+else
+    ssh -nNT -R 9028:localhost:9000 afford70@ds6.us
+fi
+

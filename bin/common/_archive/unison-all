@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+spacer=""
+
+while [ ${#spacer} -lt 75 ]
+do
+    spacer="${spacer}="
+done
+
+cd ~/.unison
+
+for F in *.prf
+do
+    bn=$(basename ${F} .prf)
+
+    if [[ ${bn} =~ nexuswin ]]
+    then
+        continue
+    fi
+
+    if [[ ${bn} =~ default ]]
+    then
+        continue
+    fi
+    echo ""
+    echo ${spacer}
+    echo ${bn}
+    echo ""
+
+    unison -ui text ${bn}
+done
+
+

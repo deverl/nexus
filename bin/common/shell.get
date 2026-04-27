@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+if [ $# -eq 0 ]
+then
+    user=$(whoami)
+else
+    user=$1
+fi
+
+finger ${user} | grep -i shell | tr A-Z a-z | sed 's/^.*shell: *//'
+
+

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Directory to watch (default: current directory)
+WATCH_DIR="${1:-.}"
+
+echo "Watching for new webhook*.json files in $WATCH_DIR ..."
+echo "Press Ctrl+C to stop."
+
+while read -d "" file; do
+    basefile=$(basename "$file")
+
+    if [[ "$basefile" == webhook*.json ]]; then
+        echo
+        echo "=== New file detected: $basefile ==="
+        cat "$file"
+        echo "=== End of $basefile ==="
+    fi
+done < <(fswatch -0 "$WATCH_DIR")
+
+

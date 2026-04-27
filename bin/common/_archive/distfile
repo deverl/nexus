@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# This script copies the given file to several directories.
+#
+# I use this to help me with developing unity in several different branches
+# and projects.
+#
+
+if [ $# -eq 0 ]
+then
+    echo ""
+    echo "usage: distfile <filepath> [<filepath2> ...]"
+    echo ""
+    exit 1
+fi
+
+# Remember the current working directory because we don't want to try to
+# copy the file on top of itself.
+
+curDir=$(realpath $(pwd))
+
+while [ $# -gt 0 ]
+do
+    theFile=$1
+
+    if [ -f "${theFile}" ]
+    then
+        for D in ~/p4/sandstone/kinomadev               \
+                 ~/p4/ces2012/printdemo                 \
+                 ~/p4/gemstone/kinomadev                \
+                 /media/psf/Home/Dropbox/Config/unity
+        do
+            targetDir=$(realpath $D)
+
+            if [ -d "${targetDir}" -a "${targetDir}" != "${curDir}" ]
+            then
+                echo "Copying ${theFile} to $targetDir"
+
+                cp -f "${theFile}" "${targetDir}"
+            fi
+        done
+    else
+        echo ""${theFile}" not found in this directory!"
+    fi
+
+    shift
+done
+
+

@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+debug=0
+
+if [ $# -gt 0 -a "$1" = "debug" ]
+then
+    debug=1
+fi
+
+
+cd ~/Library/Preferences/fsk/1/applications
+
+# First, remove all symbolic links from this directory.
+
+theSyms=$(find . -type l -print)
+
+for sym in $theSyms
+do
+    unlink $sym
+
+    if [ $debug -ne 0 ]
+    then
+        echo "Unlinked $sym in $(pwd)"
+    fi
+done
+
+
+
+# Now, find all of the directories (with some restrictions) under the
+# KinomaPrivate directory.
+
+# Only look in these subdirectories, and look in this order.
+
+for topLevel in KpsApps PrototypeApps Examples
+do
+    if [ $debug -ne 0 ]
+    then
+        echo "Processing top level: $topLevel"
+    fi
+
+    allDirs=$(find ~/opt/Dropbox/KinomaPrivate/$topLevel -type d -maxdepth 1 -print)
+
+    # Iterate over the complete list of directories, looking for directories
+    # that appear to be a Kinoma application directory.
+
+    for d in $allDirs
+    do
+        if [ $debug -ne 0 ]
+        then
+            echo "Processing $d from $topLevel"
+        fi
+
+        if [ -d $d ]
+        then
+            # If there is an application.xml file immediately under the directory,
+            # we will assume this is a Kinoma application directory.
+
+            if [ -f $d/application.xml ]
+            then
+                b=$(basename $d)
+
+                if [ "$b" != "arrests.adasheriff.org" -a "$b" != "bozo.dstokes.net" ]
+                then
+                    if [ ! -L $b ]
+                    then
+                        ln -s $d
+
+                        if [ $debug -ne 0 ]
+                        then
+                            echo "Added $b from $topLevel"
+                        fi
+                    else
+                        if [ $debug -ne 0 ]
+                        then
+                            echo "Not creating $b because it already exists!"
+                        fi
+                    fi
+                fi
+            else
+                if [ $debug -ne 0 ]
+                then
+                    echo "$d is not a Kinoma application"
+                fi
+            fi
+        else
+            echo "$d is NOT a directory!"
+        fi
+    done
+
+done
+
+

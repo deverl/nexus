@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+branchSpec=""
+
+if [ $# -eq 1 ]
+then
+    branchSpec="$1"
+elif [ -f .p4branch ]
+then
+    branchSpec=$(head -n 1 .p4branch)
+else
+    echo "ERROR: No branch given and no .p4branch file found!"
+    exit 1
+fi
+
+
+if [ -z "$branchSpec" ]
+then
+    echo "ERROR: Invalid branch spec"
+    exit 3
+fi
+
+p4 integrate -d -i -b ${branchSpec}
+p4 resolve -as
+p4 submit -d "Merging using ${branchSpec}"
+

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+SCRIPT_NAME=run-jaguar-migrations.sh
+
+cd ~/develop/vanguard/jaguar
+
+cat <<'EOF' > $SCRIPT_NAME
+OUTPUT=$(python manage.py makemigrations)
+echo $OUTPUT
+if echo "$OUTPUT" | grep -q "No changes detected"; then
+    echo "No migrations made, skipping next steps."
+else
+    echo "Migrations created, continuing..."
+    python manage.py showmigrations
+    python manage.py migrate
+    python manage.py showmigrations
+fi
+EOF
+
+chmod a+x $SCRIPT_NAME
+
+CONTAINER_ID=$(docker ps | grep jaguar-debug | awk '{print $1}')
+
+if [ -z "$CONTAINER_ID" ]
+then
+    echo "ERROR: Can't find debug container ID."
+    exit 1
+fi
+
+echo "CONTAINER_ID = $CONTAINER_ID"
+
+docker exec -it $CONTAINER_ID /bin/bash -c "./$SCRIPT_NAME"
+
+rm $SCRIPT_NAME
+

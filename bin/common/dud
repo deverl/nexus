@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Show amount of disk space used by each item named on the command line,
+# or for each item in the current directory.
+
+if [ $# -gt 0 ]
+then
+    # Show amount used for each item named on the command line.
+    while [ $# -gt 0 ]
+    do
+        D=$1
+        du -hs "$D"
+        shift
+    done
+else
+    # Show amount used for every item in the current directory.
+    for D in *
+    do
+        du -hs "$D"
+    done
+fi
+

@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+typeset -i i=0
+typeset -i finished=0
+typeset -i port=9100
+script_path="$0"
+script_name=$(basename "$script_path")
+bn=rcv
+ext=bin
+
+while [ $# -gt 0 ]
+do
+    arg="$1"
+
+    if [ "$arg" = "-p" -o "$arg" = "-port" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            port=$1
+        else
+            echo "ERROR: No parameter supplied for the -p option"
+            exit 1
+        fi
+    elif [ "$arg" = "-h" -o "$arg" = "-help" ]
+    then
+        echo "usage: $script_name [-p <port>]"
+        exit 0
+    fi
+
+    shift
+done
+
+
+padString()
+{
+    seq=$1
+
+    while [ ${#seq} -lt 4 ]
+    do
+        seq="0$seq"
+    done
+
+    echo $seq
+}
+
+
+getNextFileName()
+{
+    path="$bn"_0000."$ext"
+
+    i=0
+
+    while [ -f "$path" ]
+    do
+        i=$i+1
+
+        seq=$(padString $i)
+
+        path="$bn"_"$seq"."$ext"
+    done
+
+    echo $path
+}
+
+
+echo "Listening on port $port"
+
+
+while [ $finished -eq 0 ]
+do
+    path=$(getNextFileName)
+
+    nc -l $port > "$path"
+
+    # -s, in the test below, checks for the existence of the file and that
+    # it contains more than zero bytes.
+
+    if [ -s "$path" ]
+    then
+        stat -f "Received %z bytes into %N" "$path"
+    else
+        # Either no file or it has a size of zero bytes.
+        # If it exists and has a size of zero bytes, delete it now.
+        if [ -f "$path" ]
+        then
+            rm -rf "$path"
+        fi
+        finished=1
+    fi
+done
+
+

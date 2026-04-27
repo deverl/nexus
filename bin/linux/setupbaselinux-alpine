@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+
+sudo apk add \
+    astyle \
+    bash \
+    build-base \
+    bvi \
+    byacc \
+    bzip3 \
+    cargo \
+    clang \
+    cmake \
+    coreutils \
+    curl \
+    doxygen \
+    figlet \
+    g++ \
+    gawk \
+    gcc \
+    git \
+    gmp-dev \
+    gmp \
+    gnupg \
+    go \
+    hexdiff \
+    htop \
+    iputils-ping \
+    jq \
+    libffi-dev \
+    libgmpxx \
+    lldb \
+    lsof \
+    lua5.4 \
+    m4 \
+    make \
+    man-db \
+    nodejs \
+    ncurses-dev \
+    net-tools \
+    npm \
+    openjdk25-jdk \
+    openssh-client \
+    openssl-dev \
+    php \
+    ragel \
+    readline-dev \
+    ripgrep \
+    rustc-dev \
+    rsync \
+    sharutils \
+    sqlite \
+    sqlite-dev \
+    strace \
+    swig \
+    the_silver_searcher \
+    tk-dev \
+    tmux \
+    tree \
+    units \
+    unzip \
+    valgrind \
+    vim \
+    wget \
+    xz \
+    xz-dev \
+    zip \
+    zlib-dev
+
+
+
+if [ ! -d ~/.fzf ]
+then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+fi
+
+
+if [ ! -d ~/.sdkman ]
+then
+    curl -s "https://get.sdkman.io" | bash
+fi
+

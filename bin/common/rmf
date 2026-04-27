@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ $# -gt 0 ]
+then
+    while [ $# -gt 0 ]
+    do
+        find . -type f -iname "$1" -print -exec rm -f "{}" \;
+        shift
+    done
+else
+    echo ""
+    echo " Name: rmf"
+    echo " Note: Deletes files matching <pattern> from current directory and"
+    echo "       all sub directories."
+    echo "Usage: rmf <pattern> [<pattern2> ...]"
+    echo ""
+fi
+
+

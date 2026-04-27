@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+USERNAME=bcfkrd
+
+if [ $# -gt 0 ]
+then
+    USERNAME=$1
+fi
+
+ssh ${USERNAME}@162.144.88.87
+

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+
+
+
+fskExcludes[0]='Barack Obama'
+fskExcludes[1]=hello
+fskExcludes[2]=world
+fskExcludes[3]=the
+fskExcludes[4]=time
+fskExcludes[5]=has
+fskExcludes[6]=com.marvell.samples.hello
+fskExcludes[7]=/Users/dstokes/bin
+fskExcludes[8]='Ronald McDonald'
+fskExcludes[9]=chumbo
+fskExcludes[10]='John F. Kennedy'
+fskExcludes[11]='George Washington'
+
+
+shouldExclude()
+{
+    ret=0
+    typeset -i excludeIndex=0
+    typeset -i excludeCount=${#fskExcludes[*]}
+
+    if [ $# -ne 0 ]
+    then
+        while [ $ret -eq 0 -a $excludeIndex -lt $excludeCount ]
+        do
+            e="${fskExcludes[$excludeIndex]}"
+
+            if [ "$e" = "$1" ]
+            then
+                ret=1
+            fi
+
+            excludeIndex=${excludeIndex}+1
+
+        done
+    fi
+
+    echo $ret
+}
+
+
+
+
+for T in hello 'Barack Obama' 'Franklin D. Roosevelt' 'DeVerl Stokes' com.marvell.samples.hello
+do
+    echo "$(shouldExclude "$T") : $T"
+done
+
+
+

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Extract a range of lines from a text file.
+
+if [ $# -lt 3 ]
+then
+    echo "Usage: extract_lines  <filename>  <first_line>  <last_line>  [<additional_lines>]"
+    exit 1
+fi
+
+# set -x
+
+F="$1"
+first_line=$2
+last_line=$3
+buffer=0
+
+if [ $# -gt 3 ]
+then
+    buffer=$4
+fi
+
+let "actual_first_line = $first_line - $buffer"
+let "actual_last_line = $last_line + $buffer"
+let "num_lines = $actual_last_line - $actual_first_line + 1"
+
+
+typeset -i tot_lines=$(wc -l $F | cut -f 1 -d ' ')
+
+echo "Total lines: $tot_lines"
+
+echo "First_line = $actual_first_line, last line = $actual_last_line, num_lines = $num_lines, buffer = $buffer"
+
+cat $F | head -n $actual_last_line | tail -n $num_lines
+

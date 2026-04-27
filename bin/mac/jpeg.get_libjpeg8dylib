@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+cd /tmp
+
+wget -c http://www.ijg.org/files/jpegsrc.v8d.tar.gz
+
+tar xf jpegsrc.v8d.tar.gz
+
+cd jpeg-8d/
+
+./configure --enable-shared --enable-static
+
+make
+
+cp .libs/libjpeg.8.dylib /usr/local/opt/jpeg/lib
+
+cd ..
+
+rm -rf jpeg*
+

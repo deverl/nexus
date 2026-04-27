@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd $(brew --repo) ; git fetch; git reset --hard origin/master; brew update
+

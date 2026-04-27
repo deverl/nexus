@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+sudo apt-get clean
+sudo rm -rf /var/cache/apt/*
+sudo rm -rf /var/lib/apt/lists/*
+sudo apt-get update
+

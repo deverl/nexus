@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
+

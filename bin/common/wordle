@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+
+#
+# Not actually wordle... But a tool to help solve wordle puzzles
+#
+
+function show_help() {
+    echo ""
+    echo "wordle -- find possible matches"
+    echo ""
+    echo "usage: wordle [opts]"
+    echo "   opts: -k, --known <pat>      <pat> is a five letter string containing characters in known positions"
+    echo "                                Use periods for unknown characters. e.g. -k ..u.r"
+    echo "         --edit                 Edit the word file using vi"
+    echo "         -e, --exclude <pat>    <pat> is a string containing characters NOT in the result"
+    echo "         -f, --file <path>      Use file at <path> for the words file"
+    echo "         -h, --help             Show this help screen and exit"
+    echo "         -i, --include <pat>    <pat> is a string containing characters that must be in the result"
+    echo "         -n, --negative <pat>   negative pattern. Specify where characters can't be"
+    echo "                                One character per pattern. May be used multiple times."
+    echo "         -t, --test-mode        Run in test mode."
+    echo "         -v, --verbosity        Increase verbosity. Can use multiple times"
+    echo ""
+}
+
+
+WORDS_FILE=''
+KNOWN='.....'
+INCLUDE=''
+EXCLUDE=''
+CMD=''
+TAIL=''
+EDIT=0
+VERBOSITY=0
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-e" -o "$1" = "--exclude" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            EXCLUDE="$1"
+        else
+            echo "ERROR: No param given for --exclude"
+            exit 1
+        fi
+    elif [ "$1" = "--edit" ]
+    then
+        EDIT=1
+    elif [ "$1" = "-f" -o "$1" = "--file" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            WORDS_FILE="$1"
+        else
+            echo "ERROR: No param given for --file"
+            exit 1
+        fi
+    elif [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        show_help
+        exit 1
+    elif [ "$1" = "-i" -o "$1" = "--include" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            INCLUDE="$1"
+        else
+            echo "ERROR: No param given for --include"
+            exit 1
+        fi
+    elif [ "$1" = "-k" -o "$1" = "--known" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            KNOWN="$1"
+            LEN=${#KNOWN}
+            if [ $LEN -ne 5 ]
+            then
+                echo "ERROR: Length of known pattern must be exactly 5 characters."
+                exit 1
+            fi
+        else
+            echo "ERROR: No param given for --known"
+            exit 1
+        fi
+    elif [ "$1" = "-n" -o "$1" = "--negative" ]
+    then
+        shift
+        if [ $# -gt 0 ]
+        then
+            NEG="$1"
+            LEN=${#NEG}
+            if [ $LEN -eq 5 ]
+            then
+                TAIL="$TAIL | grep -vi $NEG"
+            else
+                echo "ERROR: Length of negative pattern must be exactly 5 characters."
+                exit 1
+            fi
+        else
+            echo "ERROR: No param given for --known"
+            exit 1
+        fi
+    elif [ "$1" = "-t" -o "$1" = "--test-mode" ]
+    then
+        let VERBOSITY=99
+    elif [ "$1" = "-v" -o "$1" = "--verbosity" ]
+    then
+        let VERBOSITY=$VERBOSITY+1
+    else
+        echo "ERROR: Unrecognized param $1"
+        exit 1
+    fi
+    shift
+done
+
+
+if [ -z "$WORDS_FILE" ]
+then
+    if [ -f ~/nexus/Config/wordplay/words5.txt ]
+    then
+        WORDS_FILE=~/nexus/Config/wordplay/words5.txt
+    elif [ -f ~/nexus/Config/wordplay/words721.txt ]
+    then
+        WORDS_FILE=~/nexus/Config/wordplay/words721.txt
+    elif [ -f /opt/homebrew/Cellar/wordplay/7.22/share/wordplay/words721.txt ]
+    then
+        WORDS_FILE=/opt/homebrew/Cellar/wordplay/7.22/share/wordplay/words721.txt
+    elif [ -f ~/projects/wordplay/words721.txt ]
+    then
+        WORDS_FILE=~/projects/wordplay/words721.txt
+    else
+        echo "ERROR: Can't find words file!"
+        exit 1
+    fi
+fi
+
+if [ ! -f $WORDS_FILE ]
+then
+    echo "ERROR: File $WORDS_FILE not found!"
+    exit 1
+fi
+
+if [ $EDIT -gt 0 ]
+then
+    vi $WORDS_FILE
+    exit
+fi
+
+if [ $VERBOSITY -gt 0 ]
+then
+    echo "Using words file at: $WORDS_FILE"
+fi
+
+CMD="cat $WORDS_FILE | grep -i ^${KNOWN}$ "
+
+
+if [ ! -z "$INCLUDE" ]
+then
+    for (( i=0; i<${#INCLUDE}; i++ ))
+    do
+        C="${INCLUDE:$i:1}"
+        CMD="$CMD | grep -i $C "
+    done
+fi
+
+if [ ! -z "$EXCLUDE" ]
+then
+    for (( i=0; i<${#EXCLUDE}; i++ ))
+    do
+        C="${EXCLUDE:$i:1}"
+        CMD="$CMD | grep -vi $C "
+    done
+fi
+
+
+if [ $VERBOSITY -gt 1 ]
+then
+    echo "CMD = '$CMD $TAIL'"
+fi
+
+if [ $VERBOSITY -lt 99 ]
+then
+    eval "$CMD $TAIL"
+fi

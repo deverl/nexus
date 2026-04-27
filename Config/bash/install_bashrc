@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+OUT_FILE=~/.bashrc
+
+SUFFIX=""
+
+if [[ $(uname -a) =~ Linux ]]
+then
+    SUFFIX=linux
+elif [[ $(uname -a) =~ Darwin ]]
+then
+    SUFFIX=mac
+elif [[ $(uname -a) =~ CYGWIN ]]
+then
+    SUFFIX=cygwin
+fi
+
+
+if [ ${#SUFFIX} -eq 0 ]
+then
+    echo "ERROR: Couldn't determine host platform!"
+    exit 1;
+fi
+
+
+if [ ! -f $OUT_FILE ]
+then
+    echo "ERROR: ${OUT_FILE} not found!"
+    exit 1
+fi
+
+cat <<EOL >> $OUT_FILE
+
+if [ ~/nexus/Config/bash/bashrc_${SUFFIX} ]
+then
+    source ~/nexus/Config/bash/bashrc_${SUFFIX}
+fi
+
+EOL

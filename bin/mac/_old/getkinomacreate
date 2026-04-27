@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# baseTargetDir=/export/Downloads/Kinoma/Kinoma_Create
+baseTargetDir=~/Install/Kinoma/Kinoma\ Create
+
+
+if [ ! -d "${baseTargetDir}" ]
+then
+    mkdir -p ${baseTargetDir}
+fi
+
+rm -f kinoma-create*.zip
+
+for F in kinoma-create.win32.win32.x86_64.zip       \
+         kinoma-create.macosx.cocoa.x86_64.zip      \
+         kinoma-create.win32.win32.x86.zip          \
+         kinoma-create.macosx.cocoa.x86.zip
+do
+    curl http://tools.kinoma.com/create/current/$F -o $F
+
+    if [ -f "$F" ]
+    then
+        sdkVersion=$(unzip -l $F | cat | grep "kinoma\.create_.*feature.xml" | sed 's/^.*create_\([0-9.]*\).*$/\1/')
+
+        echo "File: $F, Version: $sdkVersion"
+
+        targetDir=${baseTargetDir}/${sdkVersion}
+
+        if [ ! -d "${targetDir}" ]
+        then
+            echo "Creating directory: ${targetDir}"
+            mkdir "${targetDir}"
+        else
+            echo "Directory already exists: ${targetDir}"
+        fi
+
+        if [ -d "${targetDir}" ]
+        then
+            targetFile=${targetDir}/$F
+
+            # echo "targetFile: ${targetFile}"
+
+            if [ ! -f "${targetFile}" ]
+            then
+                echo "Copying $F to ${targetDir}"
+                mv "$F" "${targetDir}"
+            else
+                echo "File already exists: ${targetFile}"
+            fi
+        else
+            echo "ERROR: Directory does not exist: ${targetDir}"
+        fi
+
+        if [ -f "$F" ]
+        then
+            rm -rf "$F"
+        fi
+    else
+        echo "ERROR: Didn't download file: $F"
+    fi
+done
+
+
+# http://tools.kinoma.com/create/current/kinoma-create.win32.win32.x86_64.zip
+# http://tools.kinoma.com/create/current/kinoma-create.macosx.cocoa.x86_64.zip
+# http://tools.kinoma.com/create/current/kinoma-create.win32.win32.x86.zip
+# http://tools.kinoma.com/create/current/kinoma-create.macosx.cocoa.x86.zip
+
+

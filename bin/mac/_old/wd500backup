@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+BKDIR=/Volumes/WD500/MacBookPro
+
+BKLOG=${BKDIR}/backup.log
+
+if [ -f ${BKLOG} ]
+then
+    rm -f ${BKLOG}
+fi
+
+rsync -av --delete /Users/dstokes ${BKDIR}/Users   | tee -a ${BKLOG}
+
+rsync -av --delete /Users/suzette ${BKDIR}/Users   | tee -a ${BKLOG}
+
+rsync -av --delete /Sharing       ${BKDIR}/Sharing | tee -a ${BKLOG}
+
+cp -f /Users/dstokes/wd500backup ${BKDIR}
+

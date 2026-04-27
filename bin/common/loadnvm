@@ -1,0 +1,25 @@
+
+if [ -d $HOME/.nvm ]
+then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+else
+    if [ "$(uname)" = "Linux" ]
+    then
+        export HOMEBREW_BASE_DIR=/home/linuxbrew/.linuxbrew
+    else
+        export HOMEBREW_BASE_DIR=/opt/homebrew
+    fi
+
+
+    if [ -d "$HOMEBREW_BASE_DIR" ]
+    then
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$HOMEBREW_BASE_DIR/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_BASE_DIR/opt/nvm/nvm.sh"  # This loads nvm
+        [ -s "$HOMEBREW_BASE_DIR/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$HOMEBREW_BASE_DIR/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+    fi
+
+
+fi

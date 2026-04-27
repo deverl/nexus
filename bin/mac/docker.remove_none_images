@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+typeset -i get_all=0
+
+IMAGE_LS_OPTS=""
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-h" -o "$1" = "--help" ]
+    then
+        echo ""
+        echo "usage: docker.remove_none_images [opts]"
+        echo ""
+        echo "    opts:   -h, --help      Show this screen and exit"
+        echo "            -a, --all       Removes images with <none> in any column"
+        echo ""
+        exit 0
+    elif [ "$1" = "-a" -o "$1" = "--all" ]
+    then
+        get_all=1
+        IMAGE_LS_OPTS="$IMAGE_LS_OPTS -a"
+    else
+        echo "ERROR: Unrecognized argument ($1)"
+        exit 1
+    fi
+
+    shift
+done
+
+if [ $get_all -eq 0 ]
+then
+    # Gets rows with <none> in the first column.
+    image_ids=( $(docker image ls $IMAGE_LS_OPTS | grep '^<none>' | awk '{print $3}') )
+else
+    # Gets rows with <none> in any column.
+    image_ids=( $(docker image ls $IMAGE_LS_OPTS | grep '<none>' | awk '{print $3}') )
+fi
+
+for image_id in "${image_ids[@]}"
+do
+   echo "Removing image with id: $image_id"
+   docker image rm $image_id
+done

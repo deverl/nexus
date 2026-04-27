@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+for F in $(adb shell ls /sdcard/testdata | tr "\r" " ") ; do echo "$F" ; adb pull "/sdcard/testdata/$F" $F ; done
+

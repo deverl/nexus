@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+cd ~/Environments/python
+
+rm -rf mprintenv
+
+echo "Creating the virtual python environment..."
+
+virtualenv mprintenv
+
+source mprintenv/bin/activate
+
+
+echo "Installing Django..."
+
+tar xf ~/idrive/Install/tarballs/Django-1.4.13.tar.gz
+
+cd Django-1.4.13
+
+python setup.py install
+
+cd ..
+
+rm -rf Django-1.4.13
+
+
+echo "Installing mysql support..."
+
+pip install mysql-python
+
+
+echo "Installing memcached support..."
+
+pip install python-memcached
+
+
+echo "done."
+

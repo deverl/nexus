@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# ssh dstokes@52.37.43.88
+
+ssh dstokes@municipalhr.com
+
+

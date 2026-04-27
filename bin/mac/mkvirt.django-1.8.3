@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+#
+# Script to configure a virtual environment in which we can run
+# a Django 1.8.3 web app.
+#
+
+virtEnvDir=~/Environments/python
+virtEnvName=django-1.8.3
+
+
+echo "Creating directory structure..."
+
+mkdir -p ${virtEnvDir}
+
+cd ${virtEnvDir}
+
+
+echo "Removing residual environment..."
+
+rm -rf ${virtEnvName}
+
+
+echo "Creating the ${virtEnvName} virtual environment..."
+
+virtualenv --always-copy ${virtEnvName}
+
+
+echo "Activating the new environment..."
+
+source ${virtEnvName}/bin/activate
+
+
+echo "Installing Django..."
+
+pip install Django==1.8.3
+
+
+echo "Installing MySQL support..."
+
+# pip install MySQL_python
+pip install mysql-python
+
+
+echo "Installing memcached support..."
+
+pip install python_memcached
+
+
+echo "Deactivating the new virtual environment..."
+
+deactivate
+
+
+echo "done."
+
+
+
+

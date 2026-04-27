@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+#
+#
+# This script will walk the directory structure, starting in the current
+# directory, and will look at the status of this directory or any
+# subdirectory containing a .git folder.
+# If the git status is not clean, by default, the name of the directory and
+# the git status is printed out.
+# If the git status is clean, by default nothing is printed to the console.
+# If the -v option is specified on the command line, the name of each
+# directory and it's git status is printed on the console.
+#
+#
+
+
+typeset -i dirty=0
+typeset -i verbose=0
+typeset -i veryverbose=0
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-v" ]
+    then
+        echo "Setting verbose mode!"
+        verbose=1
+    elif [ "$1" = "-vv" ]
+    then
+        echo "Setting very verbose mode!"
+        veryverbose=1
+    elif [ "$1" = "-h" ]
+    then
+        echo ""
+        echo "usage: gitstat [-hv]"
+        echo ""
+        echo "    -h      show this screen then exit"
+        echo ""
+        echo "    -v      set verbose mode"
+        echo "            Shows the directory name of every repo"
+        echo ""
+        echo "    -vv     set very verbose mode"
+        echo "            Shows the directory name and git status of every repo"
+        echo ""
+        exit 0
+    fi
+
+    shift
+done
+
+#
+# Note: If you want to use bash, instead of zsh, among other things, you
+# will need to comment out the following line and uncomment the line after
+# that.
+# dlist=($(find . -type d -print))
+dlist=$(find . -type d -print | tr "\n" " ")
+
+
+# set -x
+
+for D in $dlist
+do
+    if [[ ! "$D" =~ ".*git.*" ]]
+    then
+        if [ -d $D/.git ]
+        then
+            dirty=0
+            pushd $D
+            # echo $D
+
+            gstat=$(git status)
+
+            if [[ ! $(echo $gstat | grep 'working directory clean') =~ 'working directory clean' ]]
+            then
+                dirty=1
+            elif [[ $(echo $gstat | grep 'Your branch is ahead') =~ 'Your branch is ahead' ]]
+            then
+                dirty=1
+            fi
+
+            if [ $dirty -eq 1 ]
+            then
+                echo ""
+                echo -n -e "\e[1;31m" # red
+                echo $D
+                echo ""
+                echo -n -e "\e[0m"
+                echo $gstat
+            elif [ $veryverbose -eq 1 ]
+            then
+                echo ""
+                echo -n -e "\e[1;32m" # green
+                echo $D
+                echo ""
+                echo -n -e "\e[0m"
+                echo $gstat
+            elif [ $verbose -eq 1 ]
+            then
+                echo ""
+                echo -n -e "\e[1;32m" # green
+                echo $D
+                echo ""
+                echo -n -e "\e[0m"
+                # No git status here!
+            fi
+
+            popd
+        fi
+    fi
+done
+
+
+echo -n -e "\e[0m"
+echo ""
+
+

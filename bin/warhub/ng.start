@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if [ ! -f package.json ]
+then
+    printf "ERROR: No package.json file found\n"
+    exit 1
+fi
+
+PORT=$(cat package.json | fgrep -- --port | sed -E 's/.*--port=([0-9]+).*/\1/')
+
+if [ -z "$PORT" ]
+then
+    printf "ERROR: No port number found\n"
+    exit 1
+fi
+
+ng serve --port=$PORT --host=0.0.0.0 --disable-host-check
+

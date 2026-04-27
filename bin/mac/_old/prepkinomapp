@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# set -x
+
+scriptName=$(basename $0)
+curDir=$(pwd)
+
+if [ $# -eq 1 ]
+then
+    kDir=$1
+
+    if [ -d $kDir ]
+    then
+        if [ -f $kDir/application.xml ]
+        then
+            appName=$(basename $kDir)
+            zipName=$curDir/$appName.zip
+
+            pushd $kDir > /dev/null 2>&1
+
+            # pwd
+
+            if [ -f $zipName ]
+            then
+                rm -f $zipName
+            fi
+
+            zip -9 -r $zipName * -x .git .gitignore .DS_Store assets/.DS_Store
+
+            popd > /dev/null 2>&1
+        else
+            echo "ERROR: $kDir is not a Kinoma application directory"
+        fi
+    else
+        echo "ERROR: $kDir is not a directory"
+    fi
+else
+    echo "usage: $scriptName <kinoma-app-dir>"
+fi
+

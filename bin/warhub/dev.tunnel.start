@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cloudflared tunnel --config ~/.cloudflared/config-dev.yml run
+

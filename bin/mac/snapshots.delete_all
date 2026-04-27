@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+DATA=( $(tmutil listlocalsnapshotdates / | grep -v Snapshot) )
+
+typeset -i COUNT=0
+
+for d in "${DATA[@]}"
+do
+    echo "Deleting $d ..."
+    tmutil deletelocalsnapshots $d
+    COUNT=COUNT+1
+done
+
+echo "Deleted ${COUNT} snapshots."
+

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ssh afford70@ds6.us
+

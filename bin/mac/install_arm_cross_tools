@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+
+# This script downloads, configures, and builds the ARM toolchain for OSX.
+# Details were gleaned from: http://www.ethernut.de/en/documents/cross-toolchain-osx.html
+
+install_dir=~/opt/armtools
+
+mkdir -p ${install_dir}
+
+cd ${install_dir}
+
+if [ ! -d _archive ]
+then
+    mkdir _archive
+fi
+
+# Download the sources and unpack the sources.
+
+for url in ftp://gcc.gnu.org/pub/binutils/releases/binutils-2.24.tar.gz        \
+           ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-4.9.2.tar.gz       \
+           ftp://sourceware.org/pub/gdb/releases/gdb-7.8.1.tar.gz                \
+           ftp://sourceware.org/pub/newlib/newlib-2.1.0.tar.gz
+           # ftp://sources.redhat.com/pub/newlib/newlib-2.1.0.tar.gz
+           # http://download.savannah.gnu.org/releases/avr-libc/avr-libc-1.6.1.tar.bz2
+           # ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-core-4.2.2.tar.bz2 \
+           # ftp://gcc.gnu.org/pub/gcc/releases/gcc-4.9.2/gcc-g++-4.2.2.tar.bz2  \
+do
+    bname=$(basename $url)
+    if [ -f _archive/$bname ]
+    then
+        echo "$bname is already downloaded"
+        cp -f _archive/$bname .
+    else
+        echo "Downloading $url"
+        curl -s -O $url
+        cp -f $bname _archive
+    fi
+    echo "Unpacking $bname"
+    tar xf $bname
+done
+
+
+echo "Preparing environment for build"
+
+# export target=arm-elf
+export target=arm-none-eabi
+export prefix=/usr/local/$target
+
+mkdir -p $prefix/bin
+export PATH=$prefix/bin:$PATH
+
+echo ""
+echo ""
+echo ""
+echo "Configure and build the binary utilities."
+
+cd binutils-2.24
+mkdir build-$target
+cd build-$target/
+
+../configure --target=$target \
+             --prefix=$prefix \
+             --enable-interwork \
+             --enable-multilib \
+             --disable-nls \
+             --disable-shared \
+             --disable-threads \
+             --with-gcc \
+             --with-gnu-as \
+             --with-gnu-ld \
+             --disable-werror
+
+make
+make install
+cd ../..
+
+echo ""
+echo ""
+echo ""
+echo "Testing the assembler"
+
+arm-none-eabi-as --version
+
+
+echo ""
+echo ""
+echo ""
+echo "Configure and build an intermediate compiler."
+
+
+brew install gmp mpc mfpr2 libmpc
+
+cd gcc-4.9.2
+mkdir build-$target
+cd build-$target/
+
+../configure --target=$target --prefix=$prefix \
+    --disable-nls --disable-shared --disable-threads \
+    --with-gcc --with-gnu-ld --with-gnu-as --with-dwarf2 \
+    --enable-languages=c,c++ --enable-interwork \
+    --enable-multilib --with-newlib \
+    --with-headers=../../newlib-2.1.0/newlib/libc/include \
+    --disable-libssp --disable-libstdcxx-pch \
+    --disable-libmudflap --disable-libgomp -v \
+    --disable-werror
+
+
+mkdir -p libiberty libcpp fixincludes
+make all-gcc
+make install-gcc
+cd ../..
+
+
+# Test out the intermediate compiler.
+
+arm-none-eabi-gcc --version
+
+
+# Configure and build the libraries.
+
+cd newlib-2.1.0
+mkdir build-$target
+cd build-$target/
+../configure --target=$target --prefix=$prefix --enable-interwork --enable-multilib
+
+make
+make install
+cd ../..
+
+
+# Build the final compiler.
+
+cd gcc-4.9.2/build-$target
+make
+make install
+cd ../..
+
+
+
+# Build the debugger.
+
+cd gdb-7.8.1
+mkdir build-$target
+cd build-$target/
+../configure --target=$target --prefix=$prefix --disable-nls
+make install
+cd ../..
+
+
+
+# Strip the binaries.
+
+strip $prefix/bin/*
+strip $prefix/$target/bin/*
+strip $prefix/libexec/gcc/$target/4.2.2/*
+
+
+
+

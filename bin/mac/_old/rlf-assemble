@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+
+typeset -i max_num=5
+
+
+function next_index()
+{
+    typeset -i v=$1
+
+    v=$v+1
+
+    if [ $v -gt $max_num ]
+    then
+        v=1
+    fi
+
+    echo "$v"
+}
+
+
+if [ $# -eq 1 ]
+then
+    typeset -i ndx=$1
+
+    ndx=$(next_index $ndx)
+
+    cmd=""
+
+    for i in $(seq 1 5)
+    do
+        f="rlf-$ndx.log"
+
+        if [ -f $f ]
+        then
+            cmd="$cmd $f"
+        fi
+
+        ndx=$(next_index $ndx)
+    done
+
+    cat $cmd > x.log
+else
+    echo "usage: rlf-assemble <cur-index>"
+fi
+

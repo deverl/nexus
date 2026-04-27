@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+cd ~
+
+# set -x
+
+podman run \
+       -v tmp:/home/dstokes/tmp \
+       -w /root \
+       -it \
+       --hostname=podmanubuntu \
+       dstokes-ubuntu \
+       /bin/bash
+
+
+#       -p 127.0.0.1:4000:4000 \
+#       --expose 4000 \
+
+# podman run -v tmp:/home/dstokes/tmp -w /root -it --hostname=podmanubuntu dstokes-ubuntu /bin/bash
+
+# podman ps -a | grep 'dstokes-ubuntu' | awk '{print $1;}'
+
+ID=$(podman ps -a | grep 'dstokes-ubuntu' | awk '{print $1;}')
+
+# echo "ID = $ID"
+
+
+if [ "$ID" != "" ]
+then
+    podman commit $ID dstokes-ubuntu
+    podman container rm $ID
+fi
+

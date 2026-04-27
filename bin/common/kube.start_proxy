@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+
+function green() {
+    if [ $# -gt 0 ]
+    then
+        # echo ""
+        echo -n -e "\x1B[1;32m" # green
+        echo "$1"
+        echo -n -e "\x1B[0m"
+    fi
+}
+
+
+function red() {
+    if [ $# -gt 0 ]
+    then
+        # echo ""
+        echo -n -e "\x1B[1;31m" # red
+        echo "$1"
+        echo -n -e "\x1B[0m"
+    fi
+}
+
+
+export KUBECONFIG=$KUBECONFIG:~/.kube/config-eks-beta
+
+export AWS_PROFILE=intuit-learning
+
+
+token=$(kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}') | grep '^token' | sed 's/^token:[ \t]*//')
+
+# echo ""
+# echo $token
+# echo ""
+
+
+echo -n $token | pbcopy
+
+echo ""
+green "The token is on the clipboard."
+echo ""
+
+open 'http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login'
+
+kubectl proxy
+

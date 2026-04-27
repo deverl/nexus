@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+# This is just a wrapper around the remdl.py script which is buried down
+# in several levels of directories (and on another computer).
+#
+# It takes special care to quote arguments containing spaces. This is
+# something I could not figure out how to do with a bash script wrapper.
+
+import os
+import sys
+import StringIO
+
+sio = StringIO.StringIO()
+
+sio.write( 'python ~/Dropbox/Projects/remdl/remdl.py --bzip2 9' )
+
+xr = xrange( 1, len(sys.argv) )
+
+for i in xr:
+    s = sys.argv[i]
+    if s:
+        if ' ' in s:
+            sio.write( ' "%s"' % (s,) )
+        else:
+            sio.write( ' %s' % (s,) )
+            
+c = sio.getvalue()
+
+# Launch the actual python script, passing to it the carefully quoted
+# arguments the user typed in.
+
+os.system( c )
+

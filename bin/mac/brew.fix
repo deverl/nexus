@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ ! -d /Library/Caches/Homebrew ]
+then
+    sudo mkdir -p /Library/Caches/Homebrew
+fi
+
+sudo chown -R $USER:admin /Library/Caches/Homebrew
+
+sudo chown -R $USER:admin /usr/local
+

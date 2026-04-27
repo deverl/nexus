@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+typeset -i verbose=0
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" == "-v" ]
+    then
+        verbose=1
+    fi
+
+    shift
+done
+
+# echo "verbose = $verbose"
+
+if [ $verbose -eq 1 ]
+then
+    ssh -fN -D 9999 -p 22 dstokes@dsubuntu.local
+else
+    ssh -fN -D 9999 -p 22 dstokes@dsubuntu.local 2> /dev/null
+fi
+

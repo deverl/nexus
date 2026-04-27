@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+# Does a "git pull" in each first level directory that contains a .git directory.
+# Most of the code in this script is dealing with maintaining a config file which
+# contains a directory name and a timestamp, separated by a colon. If a given
+# directory is already present in the config file, and has a timestamp less than
+# five minutes ago, we skip that directory. Otherwise, we will perform the git pull
+# operation in the directory.
+
+# Contains functions to print using different ansi colors.
+source ~/nexus/bin/common/ansi
+
+
+VERBOSE=0
+CONFIG_DIR=~/.git-pull-all
+CONFIG_FILE=$CONFIG_DIR/config
+TEMP_FILE=/tmp/git-pull-all.tmp
+
+# Use 5 minutes as the time threshold.
+THRESHOLD=300
+
+if [ "$1" = "-v" ]
+then
+    VERBOSE=1
+fi
+
+if [ ! -d $CONFIG_DIR ]
+then
+    mkdir -p $CONFIG_DIR
+fi
+
+if [ ! -f $CONFIG_FILE ]
+then
+    touch $CONFIG_FILE
+fi
+
+
+# Helper function to print the message ($1) if VERBOSE is greater than zero
+function logmsg() {
+    if [ ! -z "$1" ]
+    then
+        if [ $VERBOSE -gt 0 ]
+        then
+            echo "$1"
+        fi
+    fi
+}
+
+
+# Handles the details of adding the current directory ($1) to the config file
+# along with the current timestamp.
+
+function update_config_file() {
+    local CURDIR=$(pwd)
+    local TS=$(date +%s)
+
+    cat $CONFIG_FILE | grep -v -e "^${CURDIR}:" > $TEMP_FILE
+    echo "$CURDIR:$TS" >> $TEMP_FILE
+    sort $TEMP_FILE > $CONFIG_FILE
+}
+
+
+# Helper function to determine if we should process the current directory ($1).
+# We will process the directory if there is not an entry in the config file for
+# the current directory, or if there is an entry and the timestamp is older than
+# five minutes ago.
+
+function should_process_file() {
+    if [ -z "$1" ]
+    then
+        echo "ERROR: current directory (1st param) is required"
+        exit 1
+    fi
+
+    local CURDIR=$1
+    local PROCESS_DIR=0
+
+    LINE=$(cat $CONFIG_FILE | grep -e "$CURDIR:")
+
+    if [ ! -z "$LINE" ]
+    then
+        TS=$(date +%s)
+        LAST_TS=$(echo "$LINE" | cut -d: -f2)
+        DELTA=$(expr $TS - $LAST_TS)
+
+        if [ $DELTA -gt $THRESHOLD ]
+        then
+            PROCESS_DIR=1
+        fi
+    else
+        PROCESS_DIR=1
+    fi
+
+    echo $PROCESS_DIR
+}
+
+
+# Here is where we actually process the first level directories.
+
+# DIRS=$(find . -maxdepth 2 -type d -iname '.git' -print 2>/dev/null)
+
+# DIRS=$(find . -type d -maxdepth 1 -print | sort)
+
+DIRS=$(find . -maxdepth 1 -type d -print | sort)
+
+for D in $DIRS
+do
+    if [ "$D" = "." -o "$D" = ".." ]
+    then
+        logmsg "Skipping $D"
+        continue
+    fi
+
+    cd $D
+
+    if [ ! -d '.git' ]
+    then
+        logmsg "Skipping $D"
+        cd ..
+        continue
+    fi
+
+    logmsg "D = $D"
+
+    CURDIR=$(pwd)
+
+    PROCESS_DIR=$(should_process_file $CURDIR)
+
+    logmsg "PROCESS_DIR = $PROCESS_DIR"
+
+    if [ $PROCESS_DIR -gt 0 ]
+    then
+        print_bright_green "Working in directory ${CURDIR}"
+        git pull
+        update_config_file
+    else
+        print_bright_green "Skipping directory ${CURDIR}"
+    fi
+
+    cd ..
+
+    echo  ""
+done
+
