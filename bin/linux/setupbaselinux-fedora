@@ -22,6 +22,9 @@ sudo dnf install -y \
     gcc \
     git \
     gmp-devel \
+    gnome-extensions-app \
+    gnome-shell-extension-dash-to-dock \
+    gnome-shell-extension-dash-to-panel \
     gnupg \
     golang \
     hexedit \
@@ -56,6 +59,7 @@ sudo dnf install -y \
     zlib-ng \
     zlib-ng-compat \
     zsh
+
     
 sudo dnf groupinstall "Development Tools"
 sudo dnf install @development-tools
@@ -77,4 +81,13 @@ then
     ~/.fzf/install
 fi
 
+if [ ! -d ~/.pyenv ]
+then
+    curl -fsSL https://pyenv.run | bash
+fi
+
+if [ ! -d ~/.rust ]
+then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
 
