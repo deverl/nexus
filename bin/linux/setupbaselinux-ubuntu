@@ -72,4 +72,13 @@ then
     ~/.fzf/install
 fi
 
+if [ ! -d ~/.pyenv ]
+then
+    curl -fsSL https://pyenv.run | bash
+fi
+
+if [ ! -d ~/.rust ]
+then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
 
