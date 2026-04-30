@@ -8,6 +8,7 @@ alias whlogs='tail -f ~/develop/vanguard/jaguar/data/jaguar/logs/bbp.log|hl -F -
 
 alias whup=whup.sh
 alias whdown=whdown.sh
+alias whdownp='whdown.sh -p'
 
 alias whtest='(cd ~/develop/vanguard/jaguar ; docker compose up test)'
 alias whcov='(cd ~/develop/vanguard/jaguar ; docker compose up coverage)'
