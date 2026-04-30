@@ -6,7 +6,10 @@ then
     source ~/nexus/Config/zsh/zshrc_common
 fi
 
-export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+if [ -f ~/.homebrew.ini ]
+then
+    export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+fi
 
 if [ -d /opt/homebrew ]
 then
