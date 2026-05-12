@@ -119,7 +119,10 @@ alias qc='q -H -d, '
 # alias unit='composer test'
 # alias utest='composer test'
 
-export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+if [ -f ~/.homebrew.ini -a "$(uname)" = "Darwin" ]
+then
+    export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
+fi
 
 # export SVN_EDITOR=vim
 

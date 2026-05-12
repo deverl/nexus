@@ -6,7 +6,7 @@ then
     source ~/nexus/Config/zsh/zshrc_common
 fi
 
-if [ -f ~/.homebrew.ini ]
+if [ -f ~/.homebrew.ini -a "$(uname)" = "Darwin" ]
 then
     export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
 fi
