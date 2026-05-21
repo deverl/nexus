@@ -167,23 +167,23 @@ docker compose down celery
 
 # Show the starting db name
 
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
-# Edit the dev_env file, setting DB_NAME to the value of $SELECTION
+# Edit the .env file, setting DB_NAME to the value of $SELECTION
 
-sed -i '' "s/^DB_NAME=.*/DB_NAME=$SELECTION/" dev_env
+sed -i '' "s/^DB_NAME=.*/DB_NAME=$SELECTION/" .env
 
-# Show the updated db name in dev_env. Just for piece of mind.
+# Show the updated db name in .env. Just for piece of mind.
 
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
 docker compose up -d celery
 
-# Edit the dev_env file, restoring DB_NAME to rc
+# Edit the .env file, restoring DB_NAME to rc
 
-sed -i '' 's/^DB_NAME=.*/DB_NAME=rc/' dev_env
+sed -i '' 's/^DB_NAME=.*/DB_NAME=rc/' .env
 
 # Show the final db name so we know it was restored.
 
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
