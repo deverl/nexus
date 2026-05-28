@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git diff --name-only --diff-filter=A main...HEAD
+

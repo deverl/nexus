@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-TS=$(date "+%Y%m%dT%H%M%S")
+TS=$(date "+%Y%m%dT%H%M")
 
 TAR_FILE=alpine_xfce_${TS}.tar
 
