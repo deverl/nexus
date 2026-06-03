@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cd ~/develop/vanguard
+
+for D in warranty_dash affiliate_dash product_dash portal
+do
+    cd $D
+    echo "Cleaning up angular cache in $D"
+    du -hs .angular
+    ng cache clean
+    du -hs .angular
+    cd -
+done
+
