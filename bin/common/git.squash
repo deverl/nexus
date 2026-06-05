@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+MSG=""
+
+while [ $# -gt 0 ]
+do
+    if [ "$1" = "-m" -o "$1" = '--message' ]
+    then
+        shift
+        if [ $# -eq 0 ]
+        then
+            echo "ERROR: Argument required for -m"
+            exit 1
+        fi
+        MSG=$1
+    fi
+
+    shift
+done
+
+git reset --soft $(git merge-base main HEAD)
+
+if [ -n "$MSG" ]
+then
+    set -x
+    git commit -am "$MSG"
+fi
+
