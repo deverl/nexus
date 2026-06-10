@@ -6,6 +6,8 @@ mkdir -p $TARGET_BKUP_DIR
 
 rsync -av --delete depot:/mnt/sfo3_dbdump_storage/backups/current/ $TARGET_BKUP_DIR
 
+rsync -av depot:/mnt/sfo3_dbdump_storage/backups-s002/current/s002.tar.xz.age $TARGET_BKUP_DIR
+
 #
 # eval $(op signin)
 #
