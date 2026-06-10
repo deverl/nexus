@@ -4,9 +4,11 @@ TARGET_BKUP_DIR=~/opt/db_bkup
 
 mkdir -p $TARGET_BKUP_DIR
 
-rsync -av --delete depot:/mnt/sfo3_dbdump_storage/backups/current/ $TARGET_BKUP_DIR
+rsync -av --exclude _backup.log.xz depot:/mnt/sfo3_dbdump_storage/backups/current/ $TARGET_BKUP_DIR
 
 rsync -av depot:/mnt/sfo3_dbdump_storage/backups-s002/current/s002.tar.xz.age $TARGET_BKUP_DIR
+
+rsync -av --exclude _backup.log.xz depot:/mnt/sfo3_dbdump_storage/backupsdev/current/ $TARGET_BKUP_DIR
 
 #
 # eval $(op signin)
