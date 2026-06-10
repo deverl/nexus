@@ -36,8 +36,10 @@ do
     echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Restoring $DB\"" >> $LOGFILE
     
     restore_sql.sh ${DB} core localhost 5432 $XZ_FILE_NAME delete
+
+    echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Done restoring $DB\"" >> $LOGFILE
     
-    rm $XZ_FILE_NAME
+    rm -f $XZ_FILE_NAME
 
     shift
 done
