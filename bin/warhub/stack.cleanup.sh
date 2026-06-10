@@ -18,18 +18,21 @@ if [ ${#worktrees[@]} -eq 0 ]; then
     exit 1
 fi
 
-# Interactive menu with arrow key support
+# Add "all" option at the top
+options=("-- delete all worktrees --" "${worktrees[@]}")
+
+# Interactive menu
 selected=0
 while true; do
     clear
     echo "Select a worktree directory to clean up:"
     echo "======================================"
     
-    for i in "${!worktrees[@]}"; do
+    for i in "${!options[@]}"; do
         if [ $i -eq $selected ]; then
-            printf " -> %s\n" "${worktrees[$i]}"
+            printf " -> %s\n" "${options[$i]}"
         else
-            printf "    %s\n" "${worktrees[$i]}"
+            printf "    %s\n" "${options[$i]}"
         fi
     done
     
@@ -44,19 +47,30 @@ while true; do
             case "$key2" in
                 "[A")  # Up arrow
                     ((selected--))
-                    [ $selected -lt 0 ] && selected=$((${#worktrees[@]}-1))
+                    [ $selected -lt 0 ] && selected=$((${#options[@]}-1))
                     ;;
                 "[B")  # Down arrow
                     ((selected++))
-                    [ $selected -ge ${#worktrees[@]} ] && selected=0
+                    [ $selected -ge ${#options[@]} ] && selected=0
                     ;;
             esac
             ;;
         "")  # Enter key
-            selected_name="${worktrees[$selected]}"
-            echo "Selected: $selected_name"
-            echo "Running: ./stack cleanup \"$selected_name\""
-            ./stack cleanup "$selected_name"
+            selected_name="${options[$selected]}"
+            
+            if [ "$selected_name" = "-- delete all worktrees --" ]; then
+                echo "Selected: ALL worktrees"
+                echo "Running cleanup on all subdirectories..."
+                for dir in "${worktrees[@]}"; do
+                    echo "→ Cleaning $dir"
+                    ./stack cleanup "$dir"
+                done
+                echo "All cleanups completed."
+            else
+                echo "Selected: $selected_name"
+                echo "Running: ./stack cleanup \"$selected_name\""
+                ./stack cleanup "$selected_name"
+            fi
             exit 0
             ;;
         "q"|"Q")
