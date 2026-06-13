@@ -41,14 +41,14 @@ cd ~/develop/vanguard/jaguar || {
 
 # Show the starting db name
 echo "Starting DB_NAME:"
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
-# Edit the dev_env file
-sed -i '' "s/^DB_NAME=.*/DB_NAME=$DB/" dev_env
+# Edit the .env file
+sed -i '' "s/^DB_NAME=.*/DB_NAME=$DB/" .env
 
 # Show updated value
 echo "Updated DB_NAME:"
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
 # Restart services (unless dry run)
 if [ "$DRY_RUN" = true ]; then
@@ -62,11 +62,11 @@ else
 fi
 
 # Restore DB_NAME to rc
-sed -i '' 's/^DB_NAME=.*/DB_NAME=rc/' dev_env
+sed -i '' 's/^DB_NAME=.*/DB_NAME=rc/' .env
 
 # Show final value
 echo "Restored DB_NAME:"
-grep "^DB_NAME=" dev_env
+grep "^DB_NAME=" .env
 
 # Tail logs only if requested
 if [ "$LOG" = true ]; then

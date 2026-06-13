@@ -66,11 +66,11 @@ if [ -f $HOMEBREW_BASE_DIR/keepassc ]
 then
     alias kp='keepassc'
 fi
-# alias hbuu='brew update && brew upgrade --all'
+# alias hbuu='brew update && brew upgrade --all -y'
 alias hbuu='brew update && brew upgrade && date'
 alias hbuun='brew update && brew upgrade --dry-run'
 # alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date && mkdir -p /usr/local/etc/my.cnf.d'
-alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date'
+alias hbuud='brew update && brew upgrade -y && brew cleanup && brew doctor && date'
 alias ll='ls -lO -F -G'
 alias ls='ls -FCG'
 alias llc='eza -lghSH'

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+cd ~/develop/vanguard
+
+for D in warranty_dash affiliate_dash product_dash portal
+do
+    cd $D
+    if [ -d .angular ]
+    then
+        echo "INFO: Cleaning up angular cache in $D"
+        du -hs .angular
+        ng cache clean
+        du -hs .angular
+    else
+        echo "INFO: No .angular directory in the $D directory."
+    fi
+    if [ -d node_modules ]
+    then
+        echo "INFO: Removing node modules in $D"
+        du -hs node_modules
+        rm -rf node_modules
+    fi
+    cd -
+done
+

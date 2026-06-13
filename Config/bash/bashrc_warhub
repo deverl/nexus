@@ -10,8 +10,8 @@ alias whup=whup.sh
 alias whdown=whdown.sh
 alias whdownp='whdown.sh -p'
 
-alias whtest='(cd ~/develop/vanguard/jaguar ; docker compose up test)'
-alias whcov='(cd ~/develop/vanguard/jaguar ; docker compose up coverage)'
+alias whtest='time (cd ~/develop/vanguard/jaguar ; date ; docker compose up test ; date ; echo "")'
+alias whcov='time (cd ~/develop/vanguard/jaguar ; date ; docker compose up coverage ; date ; echo "")'
 alias whupdebug='(cd ~/develop/vanguard/jaguar ; dco up -d debug celery && dco logs -f debug)'
 alias cnjd='(cd ~/develop/vanguard/jaguar ; ./connect.sh jaguar-debug)'
 alias cnpsql='~/develop/vanguard/jaguar/connect.sh jaguar-psql'
