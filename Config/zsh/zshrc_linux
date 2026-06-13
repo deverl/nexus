@@ -11,7 +11,7 @@ addToPath /usr/local/go/bin
 
 addToPath /sbin
 
-alias hbuud='brew update && brew upgrade && brew cleanup && brew doctor && date'
+alias hbuud='brew update && brew upgrade -y && brew cleanup && brew doctor && date'
 alias hbuun='brew update && brew upgrade --dry-run'
 
 source ~/nexus/bin/common/z.sh
