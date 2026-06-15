@@ -31,6 +31,7 @@ alias authorize_net_test='docker exec -it jaguar-debug python manage.py authoriz
 alias lw='list_webhook_data.sh'
 
 alias rdb=rdb.sh
+alias rdball=rdball.sh
 
 alias psql='psql -h localhost -p 5432 -U core -d '
 
