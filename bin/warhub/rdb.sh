@@ -8,11 +8,30 @@
 #
 # If "all" is given as an argument, every backed-up database is restored.
 #
+# Options:
+#   -d, --dry_run   Show which databases would be restored without doing anything.
+#
 # Examples:
 #   restoredb.sh smokeautomotive          # restore one database by name
 #   restoredb.sh smoke                     # restore all databases matching "smoke"
 #   restoredb.sh smokeautomotive widget    # restore everything matching either term
 #   restoredb.sh all                       # restore every backed-up database
+#   restoredb.sh -d smoke                  # show what "smoke" would restore, but do nothing
+
+DRY_RUN=0
+declare -a ARGS=()
+for arg in "$@"
+do
+    case "$arg" in
+        -d|--dry_run)
+            DRY_RUN=1
+            ;;
+        *)
+            ARGS+=("$arg")
+            ;;
+    esac
+done
+set -- "${ARGS[@]}"
 
 if [ $# -eq 0 ]
 then
@@ -100,6 +119,16 @@ if [ ${#DBS[@]} -eq 0 ]
 then
     echo "ERROR: No databases matched the given name(s)/pattern(s)"
     exit 1
+fi
+
+if [ "$DRY_RUN" -eq 1 ]
+then
+    echo "DRY RUN: The following ${#DBS[@]} database(s) would be restored:"
+    for DB in "${DBS[@]}"
+    do
+        echo "  $DB"
+    done
+    exit 0
 fi
 
 eval $(op signin)
