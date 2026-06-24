@@ -173,11 +173,6 @@ alias tidy='tidy -config ~/.tidy.conf'
 
 alias qc='q -H -d, '
 
-alias lint='composer lint'
-alias phpstan='composer analyse'
-alias unit='composer test'
-alias utest='composer test'
-
 export HOMEBREW_GITHUB_API_TOKEN=5b7836fc70771979a3768a231bb814935572af54
 
 # export SVN_EDITOR=vim

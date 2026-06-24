@@ -114,11 +114,6 @@ alias tidy='tidy -config ~/.tidy.conf'
 
 alias qc='q -H -d, '
 
-# alias lint='composer lint'
-# alias phpstan='composer analyse'
-# alias unit='composer test'
-# alias utest='composer test'
-
 if [ -f ~/.homebrew.ini -a "$(uname)" = "Darwin" ]
 then
     export HOMEBREW_GITHUB_API_TOKEN=$(initool --get ~/.homebrew.ini homebrew HOMEBREW_GITHUB_API_TOKEN)
