@@ -10,6 +10,7 @@
 #
 # Options:
 #   -d, --dry_run   Show which databases would be restored without doing anything.
+#   -e, --exact     Only restore databases whose name exactly matches an argument.
 #
 # Examples:
 #   restoredb.sh smokeautomotive          # restore one database by name
@@ -17,14 +18,19 @@
 #   restoredb.sh smokeautomotive widget    # restore everything matching either term
 #   restoredb.sh all                       # restore every backed-up database
 #   restoredb.sh -d smoke                  # show what "smoke" would restore, but do nothing
+#   restoredb.sh -e nrac                   # restore only "nrac", not "nractraining"
 
 DRY_RUN=0
+EXACT=0
 declare -a ARGS=()
 for arg in "$@"
 do
     case "$arg" in
         -d|--dry_run)
             DRY_RUN=1
+            ;;
+        -e|--exact)
+            EXACT=1
             ;;
         *)
             ARGS+=("$arg")
@@ -102,7 +108,14 @@ else
         for F in "${ALL_FILES[@]}"
         do
             DB_NAME=$(basename "$F" .tar.xz.age)
-            if grep -q "$arg" <<< "$DB_NAME"
+            if [ "$EXACT" -eq 1 ]
+            then
+                if [ "$DB_NAME" = "$arg" ]
+                then
+                    add_db "$DB_NAME"
+                    matched=1
+                fi
+            elif grep -q "$arg" <<< "$DB_NAME"
             then
                 add_db "$DB_NAME"
                 matched=1
