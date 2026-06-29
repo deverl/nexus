@@ -20,12 +20,43 @@
 #   restoredb.sh -d smoke                  # show what "smoke" would restore, but do nothing
 #   restoredb.sh -e nrac                   # restore only "nrac", not "nractraining"
 
+usage() {
+    cat <<'EOF'
+Usage: rdb.sh [OPTIONS] NAME|PATTERN [NAME|PATTERN ...]
+       rdb.sh [OPTIONS] all
+
+Restores databases from the ~/opt/db_bkup directory.
+
+Each argument is treated as either an exact database name or a pattern that is
+matched against the names of the backed-up databases. Every matching database
+is restored. Multiple names/patterns may be given. If "all" is given, every
+backed-up database is restored.
+
+Options:
+  -d, --dry_run   Show which databases would be restored without doing anything.
+  -e, --exact     Only restore databases whose name exactly matches an argument.
+  -h, --help      Show this help message and exit.
+
+Examples:
+  rdb.sh smokeautomotive          # restore one database by name
+  rdb.sh smoke                    # restore all databases matching "smoke"
+  rdb.sh smokeautomotive widget   # restore everything matching either term
+  rdb.sh all                      # restore every backed-up database
+  rdb.sh -d smoke                 # show what "smoke" would restore, but do nothing
+  rdb.sh -e nrac                  # restore only "nrac", not "nractraining"
+EOF
+}
+
 DRY_RUN=0
 EXACT=0
 declare -a ARGS=()
 for arg in "$@"
 do
     case "$arg" in
+        -h|--help)
+            usage
+            exit 0
+            ;;
         -d|--dry_run)
             DRY_RUN=1
             ;;
@@ -42,6 +73,7 @@ set -- "${ARGS[@]}"
 if [ $# -eq 0 ]
 then
     echo "ERROR: You must provide at least 1 db name, pattern, or \"all\""
+    echo "Run 'rdb.sh --help' for usage."
     exit 1
 fi
 
