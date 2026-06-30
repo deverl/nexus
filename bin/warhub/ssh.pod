@@ -5,7 +5,7 @@ set -euo pipefail
 usage() {
     cat << 'EOF'
 
-Usage: ssh.pod [NAMESPACE] [PATTERN]
+Usage: ssh.pod [OPTIONS] [NAMESPACE] [PATTERN]
 
 Exec into the first running pod whose name matches the given pattern in the specified namespace.
 
@@ -16,21 +16,56 @@ Arguments:
   PATTERN      String/regex pattern to match pod name against (required)
                Example: core, beat, celery, rabbitmq, warranty, affiliate, portal
 
+Options:
+  -d, --dev    Use the dev KUBECONFIG (~/.kube/dev_config)
+  -h, --help   Show this help message
+
 Examples:
   ssh.pod nrac core
   ssh.pod trustpoint warranty
+  ssh.pod --dev nrac core
 
 EOF
     exit 1
 }
 
-# Show help if no args or help flags
-if [[ $# -ne 2 || "$1" == "-h" || "$1" == "--help" ]]; then
+DEV=0
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--dev)
+            DEV=1
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            printf "ERROR: Unknown option '%s'\n" "$1" >&2
+            usage
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [[ $# -ne 2 ]]; then
     usage
 fi
 
 NAMESPACE="$1"
 PATTERN="$2"
+
+# Use the dev KUBECONFIG if requested
+if [[ "$DEV" -eq 1 ]]; then
+    export KUBECONFIG=~/.kube/dev_config
+fi
 
 # Find the first running pod whose name matches the pattern
 pod=$(kubectl get pods -n "$NAMESPACE" --field-selector=status.phase=Running \
