@@ -1,60 +1,60 @@
 #!/usr/bin/env bash
 
 
-sudo apt-get install vim-gtk \
-                     vim \
-                     bvi \
-                     hexedit \
-                     ant \
-                     curl \
-                     doxygen \
-                     doxygen-gui \
-                     p7zip-full \
-                     ascii \
-                     git \
-                     git-core \
-                     subversion \
-                     swig \
-                     flex \
-                     bison \
-                     gawk \
-                     ddd \
-                     sharutils \
-                     gnupg \
-                     build-essential \
-                     zip \
-                     zlib1g-dev \
-                     ia32-libs \
-                     tofrodos \
-                     byacc \
-                     cdecl \
-                     cutils \
-                     realpath \
-                     putty \
-                     sqlite3 \
-                     libsqlite3-dev \
-                     sqlitebrowser \
-                     tidy \
-                     secure-delete \
-                     units \
-                     ghex \
-                     apt-rdepends \
-                     libtiff-tools \
-                     libtiff5-dev \
-                     pngtools \
-                     astyle \
-                     cccc \
-                     cloc \
-                     hexdiff \
-                     splint \
-                     splint-data \
-                     synaptic \
-                     tree \
-                     gksu \
-                     geany \
-                     openssh-server \
-                     gparted \
-                     scons
+sudo apt-get install \
+    ant \
+    ascii \
+    astyle \
+    bison \
+    build-essential \
+    bvi \
+    byacc \
+    cccc \
+    cdecl \
+    clang \
+    cloc \
+    curl \
+    cutils \
+    ddd \
+    doxygen \
+    doxygen-gui \
+    flang \
+    flex \
+    gawk \
+    ghex \
+    git \
+    git-core \
+    gksu \
+    gnupg \
+    gparted \
+    hexdiff \
+    hexedit \
+    htop \
+    libsqlite3-dev \
+    libtiff5-dev \
+    libtiff-tools \
+    openssh-server \
+    p7zip-full \
+    pngtools \
+    putty \
+    realpath \
+    scons
+    secure-delete \
+    sharutils \
+    splint \
+    splint-data \
+    sqlite3 \
+    sqlitebrowser \
+    swig \
+    synaptic \
+    tidy \
+    tofrodos \
+    tree \
+    units \
+    vim \
+    vim-gtk \
+    zip \
+    zlib1g-dev \
 
 
 exit
@@ -62,22 +62,25 @@ exit
 
 
 
-                     libc6-dev \
-                     lib32ncurses5-dev \
-                     gperf \
-                     imagemagick \
-                     graphicsmagick \
-                     libglib2.0-dev \
-                     tftp-hpa \
-                     tftpd-hpa \
-                     x11proto-core-dev \
-                     libx11-dev \
-                     lib32readline5-dev \
-                     lib32readline-gplv2-dev \
-                     lib32z-dev \
-                     libgl1-mesa-dev \
-                     g++-multilib \
-                     mingw32 \
+    ant \
+    apt-rdepends \
+    g++-multilib \
+    geany \
+    gperf \
+    graphicsmagick \
+    ia32-libs \
+    imagemagick \
+    lib32readline5-dev \
+    lib32readline-gplv2-dev \
+    lib32z-dev \
+    libgl1-mesa-dev \
+    libglib2.0-dev \
+    libx11-dev \
+    mingw32 \
+    subversion \
+    tftpd-hpa \
+    tftp-hpa \
+    x11proto-core-dev \
 
 
                      # gnome-panel \

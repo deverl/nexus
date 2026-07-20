@@ -16,6 +16,7 @@ sudo dnf install -y \
     curl \
     doxygen \
     figlet \
+    flang\
     flex \
     g++ \
     gawk \
@@ -28,6 +29,7 @@ sudo dnf install -y \
     gnupg \
     golang \
     hexedit \
+    htop \
     jq \
     libtool \
     lldb \

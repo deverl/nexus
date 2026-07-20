@@ -9,12 +9,14 @@ sudo apt-get install -y \
     bvi \
     byacc \
     cdecl \
+    clang \
     cloc \
     cmake \
     curl \
     cutils \
     doxygen \
     figlet \
+    flang \
     flex \
     gawk \
     git \
@@ -22,6 +24,7 @@ sudo apt-get install -y \
     golang \
     hexdiff \
     hexedit \
+    htop \
     kotlin \
     libgmp-dev \
     libncurses-dev \
@@ -47,7 +50,7 @@ sudo apt-get install -y \
     vim \
     zip \
     zlib1g-dev \
-    zlib1g-dev
+
 
 
 #    ddd \
