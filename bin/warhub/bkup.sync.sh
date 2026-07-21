@@ -2,13 +2,17 @@
 
 TARGET_BKUP_DIR=~/opt/db_bkup
 
+REMOTE_BASE_DIR='depot:/mnt/sfo3_dbdump_storage'
+
+EXCLUDES='--exclude _backup.log.xz --exclude defaultdb.tar.xz.age'
+
 mkdir -p $TARGET_BKUP_DIR
 
-rsync -av --exclude _backup.log.xz depot:/mnt/sfo3_dbdump_storage/backups/current/ $TARGET_BKUP_DIR
+rsync -av $EXCLUDES $REMOTE_BASE_DIR/backups/current/      $TARGET_BKUP_DIR
 
-rsync -av depot:/mnt/sfo3_dbdump_storage/backups-s002/current/s002.tar.xz.age $TARGET_BKUP_DIR
+rsync -av $EXCLUDES $REMOTE_BASE_DIR/backups-s002/current/ $TARGET_BKUP_DIR
 
-rsync -av --exclude _backup.log.xz depot:/mnt/sfo3_dbdump_storage/backupsdev/current/ $TARGET_BKUP_DIR
+rsync -av $EXCLUDES $REMOTE_BASE_DIR/backupsdev/current/   $TARGET_BKUP_DIR
 
 #
 # eval $(op signin)
