@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]
+then
+    printf "ERROR: You must name at least one archive file!\n"
+    exit 1
+fi
+
+while [ $# -gt 0 ]
+do
+    ARCHIVE="$1"
+
+    if [ -f "$ARCHIVE" ]
+    then
+        SIZE=$(tar tvf $ARCHIVE | awk '{sum += $5} END {print sum " bytes"}' | numfmt --to=iec-i --suffix=B)
+        printf "$ARCHIVE: $SIZE\n"
+    else
+        printf "ERROR: Can't find '$ARCHIVE'. Skipping.\n"
+    fi
+
+    shift
+done
+
+
