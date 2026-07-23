@@ -7,20 +7,15 @@ then
     exit 1
 fi
 
-if [ "$(uname)" = "Darwin" ]
-then
-    TAR=gtar
-else
-    TAR=tar
-fi
-
 while [ $# -gt 0 ]
 do
     ARCHIVE="$1"
 
     if [ -f "$ARCHIVE" ]
     then
-        SIZE=$(tar tvf $ARCHIVE | awk '{sum += $5} END {print sum " bytes"}' | numfmt --to=iec-i --suffix=B)
+        # GNU tar:  perms user/group size YYYY-MM-DD HH:MM file  (size in $3)
+        # BSD tar:  perms links user group size Mon DD YYYY file (size in $5)
+        SIZE=$(tar tvf "$ARCHIVE" | awk '{sum += ($4 ~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) ? $3 : $5} END {print sum}' | numfmt --to=iec-i --suffix=B)
         printf "$ARCHIVE: $SIZE\n"
     else
         printf "ERROR: Can't find '$ARCHIVE'. Skipping.\n"
