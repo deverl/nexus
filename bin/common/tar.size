@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
+
 if [ $# -eq 0 ]
 then
     printf "ERROR: You must name at least one archive file!\n"
     exit 1
+fi
+
+if [ "$(uname)" = "Darwin" ]
+then
+    TAR=gtar
+else
+    TAR=tar
 fi
 
 while [ $# -gt 0 ]
