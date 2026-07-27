@@ -26,9 +26,9 @@ do
 done
 
 
-# sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
+# sudo apt update && sudo apt -y upgrade && sudo apt -y dist-upgrade
 
-sudo apt-get update
+sudo apt update
 
 if [ $? -ne 0 ]
 then
@@ -37,7 +37,7 @@ then
 fi
 
 
-sudo apt-get ${autoResponse} upgrade
+sudo apt ${autoResponse} upgrade
 
 if [ $? -ne 0 ]
 then
@@ -45,7 +45,7 @@ then
     exit 1
 fi
 
-sudo apt-get ${autoResponse}  dist-upgrade
+sudo apt ${autoResponse}  dist-upgrade
 
 
 if [ $? -ne 0 ]
