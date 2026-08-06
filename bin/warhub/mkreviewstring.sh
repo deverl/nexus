@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-read -rp "MR: " mr
-read -rp "Ticket (WARH-): " ticket
-read -rp "Database: " db
+mr=${1:-}
+ticket=${2:-}
+db=${3:-}
+
+[[ -z $mr ]] && read -rp "MR: " mr
+[[ -z $ticket ]] && read -rp "Ticket (WARH-): " ticket
+[[ -z $db ]] && read -rp "Database: " db
 
 template=$(cat <<'EOF'
 Please do a detailed worktree MR review of MR <MR>.  The associated ticket is WARH-<TICKET>.
@@ -24,4 +28,3 @@ output="${output//<DB>/$db}"
 printf '%s\n' "$output" | pbcopy
 
 echo "Copied to clipboard."
-
