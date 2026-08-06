@@ -1,4 +1,38 @@
 #!/usr/bin/env bash
 
-cloudflared tunnel --config ~/.cloudflared/config-dev.yml run
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [PORT]
 
+Start the warhub cloudflared tunnel, pointing at a local HTTP port.
+
+Arguments:
+  PORT    Local port to tunnel (default: 8000)
+
+Options:
+  -h, --help    Show this help and exit
+
+Before starting cloudflared, updates ~/.cloudflared/config-dev.yml so the
+ingress service is http://localhost:PORT, then runs:
+
+  cloudflared tunnel --config ~/.cloudflared/config-dev.yml run
+
+Examples:
+  $(basename "$0")        # tunnel localhost:8000
+  $(basename "$0") 3000   # tunnel localhost:3000
+EOF
+}
+
+case "${1:-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+esac
+
+PORT=${1:-8000}
+CONFIG=~/.cloudflared/config-dev.yml
+
+sed -i '' -E "s|(service: http://localhost:)[0-9]+|\1${PORT}|" "$CONFIG"
+
+cloudflared tunnel --config "$CONFIG" run
