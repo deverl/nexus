@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+PORT=${1:-8000}
+
+ngrok http ${PORT} --url https://pseudoanthropoid-ungreyed-else.ngrok-free.dev --pooling-enabled
