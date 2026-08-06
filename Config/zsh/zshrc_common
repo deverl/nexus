@@ -185,6 +185,8 @@ then
     export PATH="$DVM_DIR/bin:$PATH"
 fi
 
+addToPath ~/.cargo/bin
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 
