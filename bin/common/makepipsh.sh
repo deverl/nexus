@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "#!/bin/bash" > pip.sh
+echo "#!/usr/bin/env bash" > pip.sh
 echo "" >> pip.sh
 echo -n "pip install " >> pip.sh
 pip list | awk 'NR>2 {print $1}' | tr '\n' ' ' >> pip.sh
