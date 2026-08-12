@@ -11,7 +11,7 @@ do
     echo $V
     echo ""
     nvm install $V
-    npm i -g npm yarn npm-check-updates @angular/cli typescript
+    npm i -g npm yarn npm-check-updates @angular/cli typescript nx
     echo  ""
 done
 
