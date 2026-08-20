@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: review.open REVIEW_NUMBER" >&2
+    exit 1
+fi
+
+open ~/develop/vanguard/.claude/tmp/mr-review-"$1".md
