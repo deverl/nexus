@@ -28,6 +28,8 @@ alias deploy='open /Users/dstokes/develop/vanguard/docs/DevOps/deployment/deploy
 
 alias authorize_net_test='docker exec -it jaguar-debug python manage.py authorize_net_test'
 
+alias clauderc='claude --remote-control'
+
 alias lw='list_webhook_data.sh'
 
 alias rdb=rdb.sh
