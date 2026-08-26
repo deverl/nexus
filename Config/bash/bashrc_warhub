@@ -40,3 +40,4 @@ function ebt() {
     echo "BEARER_TOKEN='$BEARER_TOKEN'"
 }
 
+export NX_TUI=true
