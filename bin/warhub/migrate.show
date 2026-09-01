@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# Show the most recent migrations in the bbp app.
+# Usage: migrate.show [-w|--warn] [-n COUNT]
+
+MIGRATIONS_DIR=~/develop/vanguard/jaguar/bbp/migrations
+COUNT=20
+WARN=0
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -w|--warn)
+            WARN=1
+            shift
+            ;;
+        -n)
+            if [[ -z "$2" || ! "$2" =~ ^[0-9]+$ ]]; then
+                echo "Error: -n requires a numeric argument" >&2
+                exit 1
+            fi
+            COUNT="$2"
+            shift 2
+            ;;
+        -h|--help)
+            echo "Usage: migrate.show [-w|--warn] [-n COUNT]"
+            echo "  -w, --warn   warn if any migration numbers are duplicated"
+            echo "  -n COUNT     number of migrations to show (default: $COUNT)"
+            exit 0
+            ;;
+        *)
+            echo "Usage: migrate.show [-w|--warn] [-n COUNT]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ ! -d "$MIGRATIONS_DIR" ]]; then
+    echo "Error: migrations directory not found: $MIGRATIONS_DIR" >&2
+    exit 1
+fi
+
+cd "$MIGRATIONS_DIR" || exit 1
+
+ls -1 | tail -n "$COUNT"
+
+if [[ $WARN -eq 1 ]]; then
+    # Check the whole directory, not just the tail, so nothing slips past.
+    dupes=$(ls -1 | grep -E '^[0-9]{4}_' | cut -c1-4 | sort | uniq -d)
+    if [[ -n "$dupes" ]]; then
+        echo >&2
+        echo "WARNING: duplicate migration numbers found:" >&2
+        for num in $dupes; do
+            ls -1 | grep -E "^${num}_" | sed 's/^/    /' >&2
+        done
+        exit 2
+    fi
+fi

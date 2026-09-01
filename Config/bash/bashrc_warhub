@@ -32,7 +32,7 @@ alias clauderc='claude --remote-control'
 
 alias lw='list_webhook_data.sh'
 
-alias migrate.show='(cd ~/develop/vanguard/jaguar/bbp/migrations ; ls -1 | tail -n 20)'
+# alias migrate.show='(cd ~/develop/vanguard/jaguar/bbp/migrations ; ls -1 | tail -n 20)'
 
 alias rdb=rdb.sh
 # alias rdball=rdball.sh
