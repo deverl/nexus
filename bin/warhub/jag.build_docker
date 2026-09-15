@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
 
-docker compose build debug celery test coverage psql
+jaguar_dir="${JAGUAR_DIRECTORY:-$HOME/develop/vanguard/jaguar}"
 
+if [ ! -d "$jaguar_dir" ]
+then
+    printf "ERROR: No jaguar directory found at %s!\n" "$jaguar_dir"
+    exit 1
+fi
+
+cd "$jaguar_dir" || exit 1
+
+docker compose build debug celery test coverage psql

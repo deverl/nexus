@@ -30,7 +30,9 @@ alias authorize_net_test='docker exec -it jaguar-debug python manage.py authoriz
 
 alias clauderc='claude --remote-control'
 
-alias lw='list_webhook_data.sh'
+alias linear='linear-cli'
+
+# alias lw='list_webhook_data.sh'
 
 # alias migrate.show='(cd ~/develop/vanguard/jaguar/bbp/migrations ; ls -1 | tail -n 20)'
 
@@ -45,3 +47,6 @@ function ebt() {
 }
 
 export NX_TUI=true
+
+export VANGUARD_DIRECTORY=~/develop/vanguard
+export JAGUAR_DIRECTORY=${VANGUARD_DIRECTORY}/jaguar
