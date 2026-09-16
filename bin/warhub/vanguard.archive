@@ -6,7 +6,7 @@ ARCHIVE_DIR=~/tmp/vanguard/$TS
 
 mkdir -p $ARCHIVE_DIR
 
-cd ~/develop/vanguard
+cd ${VANGUARD_DIRECTORY}
 
 tar cf git.tar .git
 

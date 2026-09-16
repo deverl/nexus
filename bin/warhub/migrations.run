@@ -2,7 +2,7 @@
 
 SCRIPT_NAME=run-jaguar-migrations.sh
 
-cd ~/develop/vanguard/jaguar
+cd ${JAGUAR_DIRECTORY}
 
 cat <<'EOF' > $SCRIPT_NAME
 OUTPUT=$(python manage.py makemigrations)

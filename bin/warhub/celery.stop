@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/develop/vanguard/jaguar
+cd ${JAGUAR_DIRECTORY}
 
 docker compose down celery
 

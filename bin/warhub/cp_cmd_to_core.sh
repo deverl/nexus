@@ -9,7 +9,7 @@ fi
 NAMESPACE=$1
 CMD=$2
 
-LOCAL_PATH="$HOME/develop/vanguard/jaguar/bbp/management/commands/adhoc_tasks/$CMD/$CMD.py"
+LOCAL_PATH="${JAGUAR_DIRECTORY}/bbp/management/commands/adhoc_tasks/$CMD/$CMD.py"
 
 
 if [ ! -f "$LOCAL_PATH" ]

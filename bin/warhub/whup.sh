@@ -34,7 +34,7 @@ fi
 
 DB="$1"
 
-cd ~/develop/vanguard/jaguar || {
+cd ${JAGUAR_DIRECTORY} || {
     echo "ERROR: Failed to change directory"
     exit 1
 }

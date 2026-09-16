@@ -4,7 +4,7 @@
 # duplicate migration numbers.
 # Usage: migrate.show [-n COUNT]
 
-MIGRATIONS_DIR=~/develop/vanguard/jaguar/bbp/migrations
+MIGRATIONS_DIR=${JAGUAR_DIRECTORY}/bbp/migrations
 COUNT=20
 
 while [[ $# -gt 0 ]]; do

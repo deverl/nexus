@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/develop/vanguard
+cd ${VANGUARD_DIRECTORY}
 
 for D in warranty_dash affiliate_dash product_dash portal
 do

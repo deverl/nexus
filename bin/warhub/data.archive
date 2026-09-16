@@ -6,7 +6,7 @@ ARCHIVE_DIR=~/tmp/data/$TS
 
 mkdir -p $ARCHIVE_DIR
 
-cd ~/develop/vanguard/jaguar
+cd ${JAGUAR_DIRECTORY}
 
 tar cf /tmp/data.tar data
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/develop/vanguard
+cd ${VANGUARD_DIRECTORY}
 
 dpy() {
     docker exec -it jaguar-debug python manage.py "$@"

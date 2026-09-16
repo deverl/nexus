@@ -161,7 +161,7 @@ then
     exit 0
 fi
 
-cd ~/develop/vanguard/jaguar
+cd ${JAGUAR_DIRECTORY}
 
 docker compose down celery
 

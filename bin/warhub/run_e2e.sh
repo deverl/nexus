@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/develop/vanguard
+cd ${VANGUARD_DIRECTORY}
 
 set -euo pipefail
 

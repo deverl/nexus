@@ -5,4 +5,4 @@ if [[ $# -ne 1 ]]; then
     exit 1
 fi
 
-open ~/develop/vanguard/.claude/tmp/mr-review-"$1".md
+open ${VANGUARD_DIRECTORY}/.claude/tmp/mr-review-"$1".md

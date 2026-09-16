@@ -32,7 +32,7 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-cd ~/develop/vanguard/jaguar || {
+cd ${JAGUAR_DIRECTORY} || {
     echo "ERROR: Failed to change directory"
     exit 1
 }

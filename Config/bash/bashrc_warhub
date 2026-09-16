@@ -1,20 +1,22 @@
+export VANGUARD_DIRECTORY=~/develop/vanguard
+export JAGUAR_DIRECTORY=${VANGUARD_DIRECTORY}/jaguar
 
 addToPath ~/nexus/bin/warhub
 
-alias whlogs='tail -f ~/develop/vanguard/jaguar/data/jaguar/logs/bbp.log|hl -F -P'
+alias whlogs='tail -f ${JAGUAR_DIRECTORY}/data/jaguar/logs/bbp.log|hl -F -P'
 
-# alias whup='cd ~/develop/vanguard/jaguar ; docker compose up -d debug celery && tail -f data/jaguar/logs/bbp.log|hl -F -P'
-# alias whdown='(cd ~/develop/vanguard/jaguar ; docker compose down ; docker.prune)'
+# alias whup='cd ${JAGUAR_DIRECTORY} ; docker compose up -d debug celery && tail -f data/jaguar/logs/bbp.log|hl -F -P'
+# alias whdown='(cd ${JAGUAR_DIRECTORY} ; docker compose down ; docker.prune)'
 
 alias whup=whup.sh
 alias whdown=whdown.sh
 alias whdownp='whdown.sh -p'
 
-alias whtest='time (cd ~/develop/vanguard/jaguar ; date ; docker compose up test ; date ; echo "")'
-alias whcov='time (cd ~/develop/vanguard/jaguar ; date ; docker compose up coverage ; date ; echo "")'
-alias whupdebug='(cd ~/develop/vanguard/jaguar ; dco up -d debug celery && dco logs -f debug)'
-alias cnjd='(cd ~/develop/vanguard/jaguar ; ./connect.sh jaguar-debug)'
-alias cnpsql='~/develop/vanguard/jaguar/connect.sh jaguar-psql'
+alias whtest='time (cd ${JAGUAR_DIRECTORY} ; date ; docker compose up test ; date ; echo "")'
+alias whcov='time (cd ${JAGUAR_DIRECTORY} ; date ; docker compose up coverage ; date ; echo "")'
+alias whupdebug='(cd ${JAGUAR_DIRECTORY} ; dco up -d debug celery && dco logs -f debug)'
+alias cnjd='(cd ${JAGUAR_DIRECTORY} ; ./connect.sh jaguar-debug)'
+alias cnpsql='${JAGUAR_DIRECTORY}/connect.sh jaguar-psql'
 alias dpy='docker exec -it jaguar-debug python manage.py'
 alias adhoc='docker exec -it jaguar-debug python manage.py adhoc_task_handler'
 
@@ -23,8 +25,8 @@ alias dashup='nvm use && npm i && sleep 1 && npm run generate && sleep 1 && ng.s
 alias dashupci='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
 alias dashupl='ng.start'
 
-alias deploy.next='open /Users/dstokes/develop/vanguard/docs/DevOps/deployment/deploying_code_next.md'
-alias deploy='open /Users/dstokes/develop/vanguard/docs/DevOps/deployment/deploying_code.md'
+alias deploy.next='open ${VANGUARD_DIRECTORY}/docs/DevOps/deployment/deploying_code_next.md'
+alias deploy='open ${VANGUARD_DIRECTORY}/docs/DevOps/deployment/deploying_code.md'
 
 alias authorize_net_test='docker exec -it jaguar-debug python manage.py authorize_net_test'
 
@@ -34,7 +36,7 @@ alias linear='linear-cli'
 
 # alias lw='list_webhook_data.sh'
 
-# alias migrate.show='(cd ~/develop/vanguard/jaguar/bbp/migrations ; ls -1 | tail -n 20)'
+# alias migrate.show='(cd ${JAGUAR_DIRECTORY}/bbp/migrations ; ls -1 | tail -n 20)'
 
 alias rdb=rdb.sh
 # alias rdball=rdball.sh
@@ -48,5 +50,3 @@ function ebt() {
 
 export NX_TUI=true
 
-export VANGUARD_DIRECTORY=~/develop/vanguard
-export JAGUAR_DIRECTORY=${VANGUARD_DIRECTORY}/jaguar
