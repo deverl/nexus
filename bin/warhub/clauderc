@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+vanguard_dir="${VANGUARD_DIRECTORY:-$HOME/develop/vanguard}"
+
+if [ ! -d "$vanguard_dir" ]
+then
+    printf "ERROR: No vanguard directory found at %s!\n" "$vanguard_dir"
+    exit 1
+fi
+
+cd "$vanguard_dir" || exit 1
+
+claude --remote-control "$1"
+

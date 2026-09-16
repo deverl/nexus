@@ -30,7 +30,7 @@ alias deploy='open ${VANGUARD_DIRECTORY}/docs/DevOps/deployment/deploying_code.m
 
 alias authorize_net_test='docker exec -it jaguar-debug python manage.py authorize_net_test'
 
-alias clauderc='claude --remote-control'
+# alias clauderc='claude --remote-control'
 
 alias linear='linear-cli'
 
