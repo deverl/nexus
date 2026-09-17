@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-if [ -z "$INFRA" ]
+if [ -z "$INFRA_DIRECTORY" ]
 then
-    INFRA=~/develop/infrastructure
+    INFRA_DIRECTORY=~/develop/infrastructure
 fi
 
-scp bb:/usr/local/bin/build_and_deploy.py             $INFRA/build-box/usr/local/bin/
+if [ ! -d "${INFRA_DIRECTORY}" ]
+then
+    printf "ERROR: '$INFRA_DIRECTORY not found\n"
+    exit 1
+fi
 
-scp bb:/usr/local/etc/build_and_deploy_vanguard.json  $INFRA/build-box/usr/local/etc/
+scp bb:/usr/local/bin/build_and_deploy.py             $INFRA_DIRECTORY/build-box/usr/local/bin/
+
+scp bb:/usr/local/etc/build_and_deploy_vanguard.json  $INFRA_DIRECTORY/build-box/usr/local/etc/
 

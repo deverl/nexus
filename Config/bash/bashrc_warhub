@@ -1,5 +1,6 @@
-export VANGUARD_DIRECTORY=~/develop/vanguard
+export VANGUARD_DIRECTORY=${HOME}/develop/vanguard
 export JAGUAR_DIRECTORY=${VANGUARD_DIRECTORY}/jaguar
+export INFRA_DIRECTORY=${HOME}/develop/infrastructure
 
 addToPath ~/nexus/bin/warhub
 
