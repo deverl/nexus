@@ -21,10 +21,10 @@ alias cnpsql='${JAGUAR_DIRECTORY}/connect.sh jaguar-psql'
 alias dpy='docker exec -it jaguar-debug python manage.py'
 alias adhoc='docker exec -it jaguar-debug python manage.py adhoc_task_handler'
 
-alias start_dash='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
-alias dashup='nvm use && npm i && sleep 1 && npm run generate && sleep 1 && ng.start'
-alias dashupci='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
-alias dashupl='ng.start'
+# alias start_dash='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
+# alias dashup='nvm use && npm i && sleep 1 && npm run generate && sleep 1 && ng.start'
+# alias dashupci='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
+# alias dashupl='ng.start'
 
 alias deploy.next='open ${VANGUARD_DIRECTORY}/docs/DevOps/deployment/deploying_code_next.md'
 alias deploy='open ${VANGUARD_DIRECTORY}/docs/DevOps/deployment/deploying_code.md'
@@ -47,6 +47,7 @@ alias psql='psql -h localhost -p 5432 -U core -d '
 alias v='cd $VANGUARD_DIRECTORY ; pwd'
 alias j='cd $JAGUAR_DIRECTORY ; pwd'
 alias i='cd $INFRA_DIRECTORY ; pwd'
+alias d='cd $JAGUAR_DIRECTORY/data ; pwd'
 
 function ebt() {
     export BEARER_TOKEN=$1
