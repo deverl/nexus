@@ -44,6 +44,10 @@ alias rdb=rdb.sh
 
 alias psql='psql -h localhost -p 5432 -U core -d '
 
+alias v='cd $VANGUARD_DIRECTORY ; pwd'
+alias j='cd $JAGUAR_DIRECTORY ; pwd'
+alias i='cd $INFRA_DIRECTORY ; pwd'
+
 function ebt() {
     export BEARER_TOKEN=$1
     echo "BEARER_TOKEN='$BEARER_TOKEN'"
