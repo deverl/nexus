@@ -2,10 +2,14 @@
 
 # Show the most recent migrations in the bbp app and warn about any
 # duplicate migration numbers.
-# Usage: migrate.show [-n COUNT]
+# Usage: migrate.check.sh [-n COUNT] [-v]
 
 MIGRATIONS_DIR=${JAGUAR_DIRECTORY}/bbp/migrations
-COUNT=20
+COUNT=10
+VERBOSE=0
+
+# Permanent duplicate prefixes. Omitted from the warning unless -v/--verbose.
+IGNORE_DUPES=(0325)
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -17,13 +21,18 @@ while [[ $# -gt 0 ]]; do
             COUNT="$2"
             shift 2
             ;;
+        -v|--verbose)
+            VERBOSE=1
+            shift
+            ;;
         -h|--help)
-            echo "Usage: migrate.show [-n COUNT]"
-            echo "  -n COUNT     number of migrations to show (default: $COUNT)"
+            echo "Usage: migrate.check.sh [-n COUNT] [-v]"
+            echo "  -n COUNT       number of migrations to show (default: $COUNT)"
+            echo "  -v, --verbose  also report ignored duplicate prefixes (${IGNORE_DUPES[*]})"
             exit 0
             ;;
         *)
-            echo "Usage: migrate.show [-n COUNT]" >&2
+            echo "Usage: migrate.check.sh [-n COUNT] [-v]" >&2
             exit 1
             ;;
     esac
@@ -40,6 +49,22 @@ ls -1 | tail -n "$COUNT"
 
 # Check the whole directory, not just the tail, so nothing slips past.
 dupes=$(ls -1 | grep -E '^[0-9]{4}_' | cut -c1-4 | sort | uniq -d)
+if [[ "$VERBOSE" -eq 0 ]]; then
+    filtered=()
+    for num in $dupes; do
+        ignore=0
+        for skip in "${IGNORE_DUPES[@]}"; do
+            if [[ "$num" == "$skip" ]]; then
+                ignore=1
+                break
+            fi
+        done
+        if [[ $ignore -eq 0 ]]; then
+            filtered+=("$num")
+        fi
+    done
+    dupes="${filtered[*]}"
+fi
 if [[ -n "$dupes" ]]; then
     # Only emit color codes when stderr is a terminal (not piped/redirected).
     if [[ -t 2 ]]; then
