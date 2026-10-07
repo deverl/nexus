@@ -14,15 +14,23 @@ if [[ $ticket =~ ^[0-9]+$ ]]; then
 fi
 
 template=$(cat <<'EOF'
-Please do a detailed worktree MR review of MR <MR>.  The associated ticket is <TICKET>.
+Please do a detailed worktree MR review of MR !<MR>.  The associated ticket is <TICKET>.
 
-You can use the glab command line tool to read the merge request, and you can use the linear-cli command line tool to read the ticket.
+Treat <TICKET> as the ticket for this review, even if the branch name has a different key or none.
+
+You can use the glab command line tool to read the merge request, and you can use the linear-cli command line tool to read the ticket. The linear MCP is also available as a service in Claude.
 
 Please use all claude configuration and guidance you can find.
 
-After the review, please run all of the tests mentioned in the MR.
+Read the MR discussion, including unresolved threads. If .claude/tmp/mr-review-<MR>.md already exists, read it too. Say which earlier findings are fixed, still open, or new.
 
-Then, please bring up the stack using the <DB> database.
+Do not post, push, commit, or edit the merge request.
+
+After the written review, run the test plan in the MR description, plus the unit tests that cover the production files in the diff. Report each as passed, failed, or skipped, and include the failure output. Skip that run when CI is already green and the diff has no production code.
+
+Then bring up the stack against the existing <DB> database with ./stack set-db. Leave that database in place, and do not download a new snapshot. If the MR adds migrations, say whether they apply on that database before treating the stack as up. Skip the "what next?" question and do this after the tests.
+
+After the stack is up, list the WTBD items that still need a person in the browser. For each one, give a concrete step and the result you expect. Stop there.
 EOF
 )
 
