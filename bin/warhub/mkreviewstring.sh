@@ -5,11 +5,16 @@ ticket=${2:-}
 db=${3:-}
 
 [[ -z $mr ]] && read -rp "MR: " mr
-[[ -z $ticket ]] && read -rp "Ticket (WARH-): " ticket
+[[ -z $ticket ]] && read -rp "Ticket (#### or PREFIX-####): " ticket
 [[ -z $db ]] && read -rp "Database: " db
 
+# Digits alone default to WARH-; any prefix already in the argument is kept.
+if [[ $ticket =~ ^[0-9]+$ ]]; then
+  ticket="WARH-${ticket}"
+fi
+
 template=$(cat <<'EOF'
-Please do a detailed worktree MR review of MR <MR>.  The associated ticket is WARH-<TICKET>.
+Please do a detailed worktree MR review of MR <MR>.  The associated ticket is <TICKET>.
 
 You can use the glab command line tool to read the merge request, and you can use the linear-cli command line tool to read the ticket.
 
