@@ -16,6 +16,8 @@ fi
 template=$(cat <<'EOF'
 Please do a detailed worktree MR review of MR !<MR>.  The associated ticket is <TICKET>.
 
+Use the /worktree-mr-review skill.
+
 Treat <TICKET> as the ticket for this review, even if the branch name has a different key or none.
 
 You can use the glab command line tool to read the merge request, and you can use the linear-cli command line tool to read the ticket. The linear MCP is also available as a service in Claude.
