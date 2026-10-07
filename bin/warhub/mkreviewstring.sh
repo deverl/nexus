@@ -28,7 +28,7 @@ Do not post, push, commit, or edit the merge request.
 
 After the written review, run the test plan in the MR description, plus the unit tests that cover the production files in the diff. Report each as passed, failed, or skipped, and include the failure output. Skip that run when CI is already green and the diff has no production code.
 
-Then bring up the stack against the existing <DB> database with ./stack set-db. Leave that database in place, and do not download a new snapshot. If the MR adds migrations, say whether they apply on that database before treating the stack as up. Skip the "what next?" question and do this after the tests.
+Then bring up the stack on the <DB> database. If that database already exists in local Postgres, point this worktree at it with ./stack set-db <DB> and leave the data in place. If it does not, restore the exact backup $HOME/opt/db_bkup/<DB>.tar.xz.age by running rdb.sh -e <DB>, then ./stack set-db <DB>. Use that local file as the only source. Do not run ./stack load-db and do not fetch a snapshot from depot. If that backup file is missing, or rdb.sh stops to wait for a 1Password sign-in, stop and say so. If the MR adds migrations, say whether they apply on that database before treating the stack as up. Skip the "what next?" question and do this after the tests.
 
 After the stack is up, list the WTBD items that still need a person in the browser. For each one, give a concrete step and the result you expect. Stop there.
 EOF
