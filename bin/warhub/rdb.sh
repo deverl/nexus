@@ -8,9 +8,13 @@
 #
 # If "all" is given as an argument, every backed-up database is restored.
 #
+# After each restore, adopt_snapshot.sql is applied so the database is safe to
+# use locally. Pass -n / --no-adopt to skip that cleanup.
+#
 # Options:
 #   -d, --dry_run   Show which databases would be restored without doing anything.
 #   -e, --exact     Only restore databases whose name exactly matches an argument.
+#   -n, --no-adopt  Restore only; do not run adopt_snapshot.sql.
 #
 # Examples:
 #   restoredb.sh smokeautomotive          # restore one database by name
@@ -19,6 +23,7 @@
 #   restoredb.sh all                       # restore every backed-up database
 #   restoredb.sh -d smoke                  # show what "smoke" would restore, but do nothing
 #   restoredb.sh -e nrac                   # restore only "nrac", not "nractraining"
+#   restoredb.sh -n smokeautomotive        # restore without running adopt_snapshot.sql
 
 usage() {
     cat <<'EOF'
@@ -32,9 +37,13 @@ matched against the names of the backed-up databases. Every matching database
 is restored. Multiple names/patterns may be given. If "all" is given, every
 backed-up database is restored.
 
+After each successful restore, adopt_snapshot.sql is applied so the database is
+safe to use locally. Pass -n / --no-adopt to skip that cleanup.
+
 Options:
   -d, --dry_run   Show which databases would be restored without doing anything.
   -e, --exact     Only restore databases whose name exactly matches an argument.
+  -n, --no-adopt  Restore only; do not run adopt_snapshot.sql.
   -h, --help      Show this help message and exit.
 
 Examples:
@@ -44,11 +53,14 @@ Examples:
   rdb.sh all                      # restore every backed-up database
   rdb.sh -d smoke                 # show what "smoke" would restore, but do nothing
   rdb.sh -e nrac                  # restore only "nrac", not "nractraining"
+  rdb.sh -n smokeautomotive       # restore without running adopt_snapshot.sql
 EOF
 }
 
 DRY_RUN=0
 EXACT=0
+NO_ADOPT=0
+WARHUB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -a ARGS=()
 for arg in "$@"
 do
@@ -62,6 +74,9 @@ do
             ;;
         -e|--exact)
             EXACT=1
+            ;;
+        -n|--no-adopt)
+            NO_ADOPT=1
             ;;
         *)
             ARGS+=("$arg")
@@ -173,6 +188,12 @@ then
     do
         echo "  $DB"
     done
+    if [ "$NO_ADOPT" -eq 1 ]
+    then
+        echo "DRY RUN: adopt_snapshot.sql would be skipped (--no-adopt)."
+    else
+        echo "DRY RUN: adopt_snapshot.sql would be applied to each restored database."
+    fi
     exit 0
 fi
 
@@ -191,7 +212,31 @@ do
 
     restore_sql.sh "${DB}" core localhost 5432 "$XZ_FILE_NAME" delete
 
+    # if ! restore_sql.sh "${DB}" core localhost 5432 "$XZ_FILE_NAME" delete
+    # then
+    #     echo "ERROR: restore failed for $DB" >&2
+    #     echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Failed restoring $DB\"" >> "$LOGFILE"
+    #     rm -f "$XZ_FILE_NAME"
+    #     exit 1
+    # fi
+
     echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Done restoring $DB\"" >> "$LOGFILE"
+
+    printf "Done restoring $DB\n"
+
+    if [ "$NO_ADOPT" -eq 0 ]
+    then
+        printf "Adopting snapshot $DB\n"
+        echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Adopting snapshot $DB\"" >> "$LOGFILE"
+        if ! psql -h localhost -U core -p 5432 -d "$DB" -v ON_ERROR_STOP=1 -f "$WARHUB_DIR/adopt_snapshot.sql"
+        then
+            echo "ERROR: adopt_snapshot.sql failed for $DB" >&2
+            echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Failed adopting snapshot $DB\"" >> "$LOGFILE"
+            rm -f "$XZ_FILE_NAME"
+            exit 1
+        fi
+        echo "date=$(date "+%Y-%m-%d") time=$(date "+%H:%M:%S") msg=\"Done adopting snapshot $DB\"" >> "$LOGFILE"
+    fi
 
     rm -f "$XZ_FILE_NAME"
 done
