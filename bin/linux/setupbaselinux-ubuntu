@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-sudo apt-get install -y \
+    sudo apt-get install -y \
     ascii \
     astyle \
     bison \
@@ -14,26 +14,42 @@ sudo apt-get install -y \
     cmake \
     curl \
     cutils \
+    dash \
+    diffutils \
     doxygen \
     figlet \
+    findutils \
     flang \
     flex \
     gawk \
+    gcal \
     git \
     gnupg \
     golang \
+    golang-go \
+    grep \
+    gzip \
     hexdiff \
     hexedit \
-    htop \
-    kotlin \
+    hostname \
+    htop \ 
     libgmp-dev \
     libncurses-dev \
+    lldb \
+    llvm \
+    lnav \
     lua5.4 \
     m4 \
+    make \
+    ncurses-base \
+    ncurses-bin \
+    net-tools \
     p7zip-full \
+    php \
     pngtools \
     pv \
     ragel \
+    ripgrep \
     scons \
     secure-delete \
     sharutils \
@@ -47,9 +63,12 @@ sudo apt-get install -y \
     tofrodos \
     tree \
     units \
+    unzip \
+    util-linux \
     vim \
     zip \
     zlib1g-dev \
+    zsh \
 
 
 
@@ -57,6 +76,7 @@ sudo apt-get install -y \
 #    geany \
 #    geany-plugins \
 #    ghex \
+#    google-chrome-stable \
 #    openssh-server \
 
 
