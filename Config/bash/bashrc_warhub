@@ -9,6 +9,7 @@ alias whlogs='tail -f ${JAGUAR_DIRECTORY}/data/jaguar/logs/bbp.log|hl -F -P'
 # alias whup='cd ${JAGUAR_DIRECTORY} ; docker compose up -d debug celery && tail -f data/jaguar/logs/bbp.log|hl -F -P'
 # alias whdown='(cd ${JAGUAR_DIRECTORY} ; docker compose down ; docker.prune)'
 
+alias dbup='(cd ${JAGUAR_DIRECTORY} ; docker compose up -d psql)'
 alias whup=whup.sh
 alias whdown=whdown.sh
 alias whdownp='whdown.sh -p'
