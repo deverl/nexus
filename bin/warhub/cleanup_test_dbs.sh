@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Drop PostgreSQL databases on localhost whose names start with test_,
+# wt-new-, or wt-checkout-,
 # plus any additional database names passed as arguments.
 #
 # Usage:
@@ -22,7 +23,7 @@ pg_database=rc
 
 psql=(psql -X -h "$pg_host" -p "$pg_port" -U "$pg_user" -d "$pg_database")
 
-# Names to drop. Arguments are recorded first; test_* names from \l follow.
+# Names to drop. Arguments are recorded first; test_*, wt-new-*, and wt-checkout-* names from \l follow.
 databases=()
 
 trim() {
@@ -133,7 +134,7 @@ EOF
   while IFS= read -r name; do
     [[ -z $name ]] && continue
     parsed=$((parsed + 1))
-    if [[ $name == test_* ]]; then
+    if [[ $name == test_* || $name == wt-new-* || $name == wt-checkout-* ]]; then
       add_db "$name"
     fi
   done < <(printf '%s\n' "$list_output" | names_from_list)
