@@ -175,6 +175,8 @@ alias qc='q -H -d, '
 
 export HOMEBREW_GITHUB_API_TOKEN=5b7836fc70771979a3768a231bb814935572af54
 
+alias mypsql='command psql -d postgres -U postgresadmin -p 5432 -h localhost'
+
 # export SVN_EDITOR=vim
 
 source ~/nexus/bin/common/loadnvm
