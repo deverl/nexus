@@ -9,7 +9,6 @@ alias whlogs='tail -f ${JAGUAR_DIRECTORY}/data/jaguar/logs/bbp.log|hl -F -P'
 # alias whup='cd ${JAGUAR_DIRECTORY} ; docker compose up -d debug celery && tail -f data/jaguar/logs/bbp.log|hl -F -P'
 # alias whdown='(cd ${JAGUAR_DIRECTORY} ; docker compose down ; docker.prune)'
 
-alias dbup='(cd ${JAGUAR_DIRECTORY} ; docker compose up -d psql)'
 alias whup=whup.sh
 alias whdown=whdown.sh
 alias whdownp='whdown.sh -p'
@@ -21,6 +20,11 @@ alias cnjd='(cd ${JAGUAR_DIRECTORY} ; ./connect.sh jaguar-debug)'
 alias cnpsql='${JAGUAR_DIRECTORY}/connect.sh jaguar-psql'
 alias dpy='docker exec -it jaguar-debug python manage.py'
 alias adhoc='docker exec -it jaguar-debug python manage.py adhoc_task_handler'
+
+alias db.cleanup='cleanup_test_dbs.sh'
+alias db.up='(cd ${JAGUAR_DIRECTORY} ; docker compose up -d psql)'
+alias db.show='printf "\l\n" | psql rc'
+alias db.list='psql rc -tAc "SELECT datname FROM pg_database WHERE NOT datistemplate ORDER BY datname;"'
 
 # alias start_dash='nvm use && npm ci && sleep 1 && npm run generate && sleep 1 && ng.start'
 # alias dashup='nvm use && npm i && sleep 1 && npm run generate && sleep 1 && ng.start'
