@@ -1,0 +1,54 @@
+#!/bin/zsh
+#
+# Find and optionally remove Cursor's macOS updater cache.
+# Usage:
+#   ./clear-cursor-updater-cache.sh        # dry run
+#   ./clear-cursor-updater-cache.sh --delete
+
+set -euo pipefail
+
+cache_root="$HOME/Library/Caches"
+delete=false
+
+if [[ "${1:-}" == "--delete" ]]; then
+    delete=true
+elif [[ $# -ne 0 ]]; then
+    echo "Usage: $0 [--delete]" >&2
+    exit 2
+fi
+
+# Match the known Cursor updater cache naming convention,
+# without assuming a particular unique application identifier.
+matches=()
+
+for path in "$cache_root"/*; do
+    [[ -d "$path" ]] || continue
+
+    name="${path:t}"
+
+    if [[ "$name" == *.ShipIt ]] &&
+       [[ "$name" == *todesktop* ]]; then
+        matches+=("$path")
+    fi
+done
+
+if (( ${#matches[@]} == 0 )); then
+    echo "No matching Cursor updater cache found."
+    exit 0
+fi
+
+for path in "${matches[@]}"; do
+    echo "Found: $path"
+
+    if [[ "$delete" == true ]]; then
+        /bin/rm -rf "$path"
+        echo "Deleted."
+    else
+        echo "Dry run: not deleted."
+    fi
+done
+
+if [[ "$delete" == false ]]; then
+    echo
+    echo "Review the paths above, then run with --delete to remove them."
+fi
